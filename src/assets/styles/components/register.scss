@@ -1,0 +1,52 @@
+@use '../_variables' as *;
+@use '../_mixins' as *;
+
+.register {
+  @include container;
+  @include flex-column;
+  gap: $spacing-4;
+
+  &__title {
+    @include heading-2;
+    margin: 0 0 $spacing-6 0;
+    text-align: center;
+  }
+
+  &__form {
+    @include flex-column;
+    gap: $spacing-4;
+  }
+
+  &__form-group {
+    @include form-group;
+  }
+
+  &__input {
+    @include input-base;
+  }
+
+  &__button {
+    @include button-primary;
+    width: 100%;
+    padding: $spacing-3;
+
+    &--loading {
+      @include button-loading;
+    }
+  }
+
+  &__error {
+    @include error-state;
+    @include small-text;
+    margin-top: $spacing-2;
+  }
+
+  &__link {
+    text-align: center;
+    margin-top: $spacing-4;
+    
+    a {
+      @include link-primary;
+    }
+  }
+}
