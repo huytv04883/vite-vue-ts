@@ -31,72 +31,39 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form @submit.prevent="handleLogin">
-      <div class="form-group">
-        <input v-model="email" type="email" placeholder="Email" required />
-        <input v-model="password" type="password" placeholder="Password" required />
+  <div class="login">
+    <h2 class="login__title">Login</h2>
+    <form class="login__form" @submit.prevent="handleLogin">
+      <div class="login__form-group">
+        <input 
+          v-model="email" 
+          class="login__input"
+          type="email" 
+          placeholder="Email" 
+          required 
+        />
+        <input 
+          v-model="password" 
+          class="login__input"
+          type="password" 
+          placeholder="Password" 
+          required 
+        />
       </div>
-      <button type="submit" :disabled="loading">
+      <button 
+        type="submit" 
+        class="login__button"
+        :class="{ 'login__button--loading': loading }"
+        :disabled="loading"
+      >
         {{ loading ? 'Logging in...' : 'Login' }}
       </button>
-      <p class="error" v-if="error">{{ error }}</p>
+      <p v-if="error" class="login__error">{{ error }}</p>
     </form>
 
-    <p>
+    <div class="login__footer">
       Don't have an account?
       <router-link to="/register">Register</router-link>
-    </p>
+    </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.login-container {
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 24px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-  h2 {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  .form-group {
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-  }
-
-  button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background: #4f46e5;
-    color: white;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    &:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-  }
-
-  .error {
-    color: red;
-    margin-top: 10px;
-    text-align: center;
-  }
-}
-</style>

@@ -54,7 +54,8 @@ const handleRegister = async () => {
     </form>
     <p v-if="error" class="register__error">{{ error }}</p>
     <div class="register__link">
-      <router-link to="/login">Already have an account? Login</router-link>
+      Already have an account?
+      <router-link to="/login">Login</router-link>
     </div>
   </div>
 </template>

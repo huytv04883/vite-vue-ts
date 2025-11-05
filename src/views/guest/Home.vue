@@ -11,4 +11,3 @@ defineOptions({
   <h1>Welcome to the Home Page</h1>
   <button @click="router.push('/register')">Start</button>
 </template>
-

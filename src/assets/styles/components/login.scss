@@ -1,7 +1,7 @@
 @use '../_variables' as *;
 @use '../_mixins' as *;
 
-.register {
+.login {
   @include flex-column;
   gap: $spacing-4;
   max-width: 400px;
@@ -42,16 +42,18 @@
   &__error {
     @include error-state;
     @include small-text;
-    margin-top: $spacing-2;
+    margin-top: $spacing-3;
+    text-align: center;
   }
 
-  &__link {
+  &__footer {
     text-align: center;
     margin-top: $spacing-4;
     @include small-text;
 
     a {
       @include link-primary;
+      margin-left: $spacing-1;
     }
   }
 }
