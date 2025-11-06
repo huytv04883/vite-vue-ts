@@ -1,57 +1,95 @@
 <script setup lang="ts">
-import { useAuth } from '@/hooks/useAuth';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const { register } = useAuth();
-const router = useRouter();
+import { auth } from '@/firebase/config';
+import router from '@/router';
+import type { LoginForm } from '@/types/login.type';
+import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { reactive, ref } from 'vue';
 
 defineOptions({
   name: 'Register-page',
 });
 
-const email = ref('');
-const password = ref('');
 const loading = ref(false);
 const error = ref('');
 
+const registerFormRef = ref<FormInstance>();
+const registerForm = reactive<LoginForm>({
+  email: '',
+  password: '',
+});
+
+const rules = reactive<FormRules<LoginForm>>({
+  email: [
+    { required: true, message: 'Please input your email', trigger: 'change' },
+    { type: 'email', message: 'Please input a valid email', trigger: 'change' },
+  ],
+  password: [
+    { required: true, message: 'Please input your password', trigger: 'change' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'change' },
+  ],
+});
+
 const handleRegister = async () => {
-  try {
+  const formEl = registerFormRef.value;
+  if (!formEl) return;
+  const valid = await formEl.validate();
+  if (valid) {
     loading.value = true;
-    error.value = '';
-    await register(email.value, password.value);
-    router.push('/Login');
-  } catch (err: unknown) {
-    error.value = (err as { message?: string })?.message ?? 'An error occurred';
-  } finally {
-    loading.value = false;
+    try {
+      await createUserWithEmailAndPassword(auth, registerForm.email, registerForm.password)
+        .then((res) => {
+          if (!res) return;
+          ElMessage({
+            message: 'Registration successful!',
+            type: 'success',
+            plain: true,
+          });
+          router.authUser = res.user;
+          router.push({ name: 'Dashboard' });
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message ?? 'An error occurred';
+      ElMessage({ message: msg, type: 'error', plain: true });
+      loading.value = false;
+    }
   }
 };
 </script>
 
 <template>
   <div class="register">
-    <h2 class="register__title">Create Account</h2>
-    <form class="register__form" @submit.prevent="handleRegister">
+    <h2 class="register__title">Register</h2>
+    <el-form
+      ref="registerFormRef"
+      :rules="rules"
+      :model="registerForm"
+      class="register__form"
+      label-width="100px"
+      label-position="left"
+      @submit.prevent="handleRegister"
+    >
       <div class="register__form-group">
-        <input v-model="email" class="register__input" type="email" placeholder="Email" required />
-        <input
-          v-model="password"
-          class="register__input"
-          type="password"
-          placeholder="Password"
-          required
-        />
+        <el-form-item label="Email" prop="email">
+          <input v-model="registerForm.email" class="register__input" placeholder="Email" />
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <input v-model="registerForm.password" class="register__input" placeholder="Password" />
+        </el-form-item>
       </div>
-      <button
-        type="submit"
-        class="register__button"
+      <el-button
+        type="primary"
         :class="{ 'register__button--loading': loading }"
-        :disabled="loading"
+        :loading="loading"
+        native-type="submit"
       >
         {{ loading ? 'Registering...' : 'Register' }}
-      </button>
-    </form>
+      </el-button>
+    </el-form>
     <p v-if="error" class="register__error">{{ error }}</p>
     <div class="register__link">
       Already have an account?

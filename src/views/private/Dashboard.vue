@@ -2,9 +2,10 @@
 defineOptions({
   name: 'Dashboard-page',
 });
+
 </script>
 <template>
-  <div>
-    <h1>Dashboard</h1>
+  <div class="dashboard">
+    <h1>Welcome to the Dashboard</h1>
   </div>
 </template>

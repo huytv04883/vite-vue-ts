@@ -1,7 +1,14 @@
-import { ref } from 'vue';
 import { auth } from '@/firebase/config';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
+import { ref } from 'vue';
 
+const provider = new GoogleAuthProvider();
 const user = ref(auth.currentUser);
 
 auth.onAuthStateChanged((_user) => {
@@ -17,9 +24,13 @@ export function useAuth() {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
+  const signInWithGoogle = async () => {
+    return await signInWithPopup(auth, provider);
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
 
-  return { user, register, login, logout };
+  return { user, register, login, logout, signInWithGoogle };
 }

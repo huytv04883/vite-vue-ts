@@ -1,30 +1,85 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'vue-router';
 import { auth } from '@/firebase/config';
+import { setDataUser } from '@/helper/storage';
+import { useAuth } from '@/hooks/useAuth';
+import router from '@/router';
+import { LoginForm } from '@/types/login.type';
+import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { reactive, ref } from 'vue';
+
+const { signInWithGoogle } = useAuth();
 
 defineOptions({
   name: 'Login-page',
 });
 
-const email = ref('');
-const password = ref('');
-const error = ref('');
 const loading = ref(false);
 
-const router = useRouter();
+const loginFormRef = ref<FormInstance>();
+const loginForm = reactive<LoginForm>({
+  email: '',
+  password: '',
+});
 
-const handleLogin = async () => {
-  loading.value = true;
-  error.value = '';
+const rules = reactive<FormRules<LoginForm>>({
+  email: [
+    { required: true, message: 'Please input your email', trigger: 'change' },
+    { type: 'email', message: 'Please input a valid email', trigger: 'change' },
+  ],
+  password: [
+    { required: true, message: 'Please input your password', trigger: 'change' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'change' },
+  ],
+});
 
+const handleLogin = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  const valid = await formEl.validate();
+  if (valid) {
+    loading.value = true;
+    try {
+      await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password)
+        .then((res) => {
+          if (!res) return;
+          ElMessage({
+            message: 'Login successful!',
+            type: 'success',
+            plain: true,
+          });
+          router.authUser = res.user;
+          setDataUser(res);
+          router.push({ name: 'Dashboard' });
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    } catch (error) {
+      const msg = (error as { message?: string })?.message ?? 'An error occurred';
+      ElMessage({ message: msg, type: 'error', plain: true });
+      loading.value = false;
+    }
+  }
+};
+
+const handleGoogleLogin = async () => {
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-    router.push('/chat'); // redirect to private page
-  } catch (err: unknown) {
-    error.value = (err as { message?: string })?.message ?? 'An error occurred';
-  } finally {
+    loading.value = false;
+    await signInWithGoogle().then((res) => {
+      if (!res) return;
+      ElMessage({
+        message: 'Login with Google successful!',
+        type: 'success',
+        plain: true,
+      });
+      router.authUser = res.user;
+      setDataUser(res);
+      router.push({ name: 'Dashboard' });
+    });
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
     loading.value = false;
   }
 };
@@ -33,34 +88,43 @@ const handleLogin = async () => {
 <template>
   <div class="login">
     <h2 class="login__title">Login</h2>
-    <form class="login__form" @submit.prevent="handleLogin">
+    <el-form
+      ref="loginFormRef"
+      :rules="rules"
+      :model="loginForm"
+      class="login__form"
+      label-width="100px"
+      label-position="left"
+      @submit.prevent="handleLogin"
+    >
       <div class="login__form-group">
-        <input 
-          v-model="email" 
-          class="login__input"
-          type="email" 
-          placeholder="Email" 
-          required 
-        />
-        <input 
-          v-model="password" 
-          class="login__input"
-          type="password" 
-          placeholder="Password" 
-          required 
-        />
+        <el-form-item label="Email" prop="email">
+          <input v-model="loginForm.email" class="login__input" placeholder="Email" />
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <input v-model="loginForm.password" class="login__input" placeholder="Password" />
+        </el-form-item>
       </div>
-      <button 
-        type="submit" 
-        class="login__button"
+      <el-button
+        type="primary"
         :class="{ 'login__button--loading': loading }"
         :disabled="loading"
+        @click="handleLogin(loginFormRef)"
       >
         {{ loading ? 'Logging in...' : 'Login' }}
-      </button>
-      <p v-if="error" class="login__error">{{ error }}</p>
-    </form>
-
+      </el-button>
+    </el-form>
+    <el-divider content-position="center">Or</el-divider>
+    <el-button class="login__google-btn" @click="handleGoogleLogin">
+      <img
+        src="@/assets/imgs/gg.png"
+        width="20px"
+        height="20px"
+        alt="Google Logo"
+        class="google-logo"
+      />
+      Sign in with Google
+    </el-button>
     <div class="login__footer">
       Don't have an account?
       <router-link to="/register">Register</router-link>

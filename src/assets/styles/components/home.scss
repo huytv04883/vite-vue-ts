@@ -1,0 +1,131 @@
+// Variables
+$color-primary: #9c6fd9;
+$color-primary-light: #b08ae8;
+$color-dark: #1a1a1a;
+$color-gray: #666;
+$color-white: #fff;
+$color-border: #eee;
+$color-gradient-start: #f5e6ff;
+$color-gradient-end: #ffe6f0;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 2rem;
+$spacing-xl: 4rem;
+
+$border-radius-sm: 6px;
+$border-radius-md: 8px;
+
+$transition-default: all 0.3s ease;
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.navbar {
+  background: $color-white;
+  border-bottom: 1px solid $color-border;
+  padding: $spacing-md $spacing-lg;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar__logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $color-dark;
+}
+
+.navbar__btn {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  font-weight: 500;
+  transition: $transition-default;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+
+  &--outline {
+    background: none;
+    border: 1px solid $color-primary;
+    color: $color-primary;
+
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// Hero Section
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $color-gradient-start 0%, $color-gradient-end 100%);
+  padding: $spacing-xl $spacing-lg;
+  text-align: center;
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: $color-dark;
+  margin-bottom: $spacing-md;
+}
+
+.hero__subtitle {
+  font-size: 1.125rem;
+  color: $color-gray;
+  margin-bottom: $spacing-lg;
+  max-width: 500px;
+}
+
+.btn-start {
+  border: none;
+  padding: $spacing-md $spacing-lg;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: $transition-default;
+  text-decoration: none;
+  display: inline-block;
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  color: $color-white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(156, 111, 217, 0.3);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 1.75rem;
+  }
+
+  .navbar {
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .navbar__logo {
+    font-size: 1.25rem;
+  }
+}

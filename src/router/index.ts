@@ -43,21 +43,23 @@ const router = createRouter({
 
 // Navigation guards can be added here if needed
 
-router.beforeEach((to, _, next) => {
-  const account = to.matched[0];
-  const meta = account?.meta;
-  if (meta?.requiresAuth) {
-    if (account?.path === ROUTES.BASE) {
-      next({ name: 'Dashboard' });
-      return;
-    }
-    next();
-  } else {
-    if (account?.path === ROUTES.BASE) {
-      next({ name: 'Login' });
-    }
-    next();
+router.beforeEach((to, _from, next) => {
+  const user = router.authUser ?? null;
+
+  const requiresAuth = to.matched.some((rec) => rec.meta?.requiresAuth);
+
+  if (requiresAuth && !user) {
+    return next({ name: 'Login', query: { redirect: to.fullPath } });
   }
+
+  const isPublicAuthPage = to.name === 'Login' || to.name === 'Register' || to.name === 'Home';
+  if (user && isPublicAuthPage) {
+    if (to.name !== 'Dashboard') {
+      return next({ name: 'Dashboard' });
+    }
+  }
+
+  return next();
 });
 
 export default router;

@@ -1,5 +1,10 @@
+// Layouts
+@use './layout-private.scss';
+
+// Component
 @use './components/register.scss';
 @use './components/login.scss';
+@use './components/home.scss';
 
 // Global styles
 * {
@@ -19,34 +24,89 @@ body {
 }
 
 // Base typography
-h1 { @include heading-1; }
-h2 { @include heading-2; }
-h3 { @include heading-3; }
-p { @include body-text; }
-small { @include small-text; }
+h1 {
+  @include heading-1;
+}
+h2 {
+  @include heading-2;
+}
+h3 {
+  @include heading-3;
+}
+p {
+  @include body-text;
+}
+small {
+  @include small-text;
+}
 
 // Base form elements
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
 }
 
 // Utility classes
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
 
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: $spacing-1; }
-.mb-2 { margin-bottom: $spacing-2; }
-.mb-3 { margin-bottom: $spacing-3; }
-.mb-4 { margin-bottom: $spacing-4; }
-.mb-5 { margin-bottom: $spacing-5; }
-.mb-6 { margin-bottom: $spacing-6; }
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: $spacing-1;
+}
+.mb-2 {
+  margin-bottom: $spacing-2;
+}
+.mb-3 {
+  margin-bottom: $spacing-3;
+}
+.mb-4 {
+  margin-bottom: $spacing-4;
+}
+.mb-5 {
+  margin-bottom: $spacing-5;
+}
+.mb-6 {
+  margin-bottom: $spacing-6;
+}
 
-.mt-0 { margin-top: 0; }
-.mt-1 { margin-top: $spacing-1; }
-.mt-2 { margin-top: $spacing-2; }
-.mt-3 { margin-top: $spacing-3; }
-.mt-4 { margin-top: $spacing-4; }
-.mt-5 { margin-top: $spacing-5; }
-.mt-6 { margin-top: $spacing-6; }
+.mt-0 {
+  margin-top: 0;
+}
+.mt-1 {
+  margin-top: $spacing-1;
+}
+.mt-2 {
+  margin-top: $spacing-2;
+}
+.mt-3 {
+  margin-top: $spacing-3;
+}
+.mt-4 {
+  margin-top: $spacing-4;
+}
+.mt-5 {
+  margin-top: $spacing-5;
+}
+.mt-6 {
+  margin-top: $spacing-6;
+}
+
+// Form Element Plus
+
+body {
+  .el-form-item {
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+}

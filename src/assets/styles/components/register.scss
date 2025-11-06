@@ -5,6 +5,7 @@
   @include flex-column;
   gap: $spacing-4;
   max-width: 400px;
+  margin: auto;
   padding: $spacing-6;
   background: $white;
   border-radius: $border-radius-lg;

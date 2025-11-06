@@ -5,6 +5,8 @@
   @include flex-column;
   gap: $spacing-4;
   max-width: 400px;
+  margin: auto;
+  width: 100%;
   padding: $spacing-6;
   background: $white;
   border-radius: $border-radius-lg;
@@ -30,12 +32,17 @@
   }
 
   &__button {
-    @include button-primary;
-    width: 100%;
-    padding: $spacing-3;
-
     &--loading {
       @include button-loading;
+    }
+  }
+
+  &__google-btn {
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-2;
     }
   }
 
