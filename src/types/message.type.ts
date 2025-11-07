@@ -1,0 +1,8 @@
+import { Timestamp } from "./base.type";
+
+export interface Message {
+  id: string;
+  text: string;
+  senderId: string;
+  createdAt: Timestamp;
+}

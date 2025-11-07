@@ -34,6 +34,12 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true, layout: PATH.PRIVATE },
   },
+  {
+    path: ROUTES.CHAT,
+    name: 'Chat',
+    component: () => import('@/views/private/ChatDetail.vue'),
+    meta: { requiresAuth: true, layout: PATH.PRIVATE },
+  },
 ];
 
 const router = createRouter({

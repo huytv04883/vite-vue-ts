@@ -1,4 +1,5 @@
 import { db } from '@/firebase/config';
+import { Message } from '@/types/message.type';
 import {
   addDoc,
   collection,
@@ -10,7 +11,6 @@ import {
   where,
 } from 'firebase/firestore';
 
-// create or get chat between 2 users
 export const getOrCreateChat = async (userId1: string, userId2: string) => {
   const chatQuery = query(
     collection(db, 'chats'),
@@ -34,7 +34,6 @@ export const getOrCreateChat = async (userId1: string, userId2: string) => {
   return chatDoc.id;
 };
 
-// send a message
 export const sendMessage = async (chatId: string, senderId: string, text: string) => {
   await addDoc(collection(db, `chats/${chatId}/messages`), {
     senderId,
@@ -44,11 +43,11 @@ export const sendMessage = async (chatId: string, senderId: string, text: string
 };
 
 // listen to messages in real-time
-export const listenMessages = (chatId: string, callback: (msgs: unknown[]) => void) => {
+export const listenMessages = (chatId: string, callback: (msgs: Message[]) => void) => {
   const q = query(collection(db, `chats/${chatId}/messages`), orderBy('createdAt', 'asc'));
 
   return onSnapshot(q, (snapshot) => {
-    const msgs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const msgs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Message[];
     callback(msgs);
   });
 };
