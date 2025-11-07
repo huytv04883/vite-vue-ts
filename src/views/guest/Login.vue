@@ -3,6 +3,7 @@ import { auth } from '@/firebase/config';
 import { setDataUser } from '@/helper/storage';
 import { useAuth } from '@/hooks/useAuth';
 import router from '@/router';
+import { saveUserIfNotExists } from '@/services/userService';
 import { LoginForm } from '@/types/login.type';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
@@ -66,8 +67,9 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
 const handleGoogleLogin = async () => {
   try {
     loading.value = false;
-    await signInWithGoogle().then((res) => {
+    await signInWithGoogle().then(async (res) => {
       if (!res) return;
+      await saveUserIfNotExists();
       ElMessage({
         message: 'Login with Google successful!',
         type: 'success',

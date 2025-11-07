@@ -1,11 +1,38 @@
 <script setup lang="ts">
+import { auth } from '@/firebase/config';
+import { getOrCreateChat } from '@/services/chatService';
+import { getRandomUsers } from '@/services/userService';
+import { useChatStore } from '@/store/useChatStore';
+import { User } from '@/types/user.type';
+import { onMounted, ref } from 'vue';
 defineOptions({
   name: 'Dashboard-page',
 });
 
+const chatStore = useChatStore();
+
+const users = ref<User[] | null>(null);
+
+onMounted(async () => {
+  users.value = await getRandomUsers(100);
+});
+
+const handleCreateChat = async (userUid: string) => {
+  await getOrCreateChat(userUid, auth.currentUser?.uid as string).then((chatId) => {
+    if (!chatId) return;
+    chatStore.setRoomChatId(chatId);
+  });
+};
 </script>
 <template>
   <div class="dashboard">
-    <h1>Welcome to the Dashboard</h1>
+    <div class="user-list">
+      <ul>
+        <li v-for="user in users" :key="user.uid" @click="handleCreateChat(user.uid)">
+          <img :src="user.photoURL" alt="User Avatar" width="30" height="30" />
+          <span>{{ user.displayName }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>

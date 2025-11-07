@@ -1,0 +1,13 @@
+@use '../_variables' as *;
+@use '../_mixins' as *;
+
+.user-list {
+  margin-top: $spacing-4;
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    list-style: none;
+    gap: $spacing-2;
+  }
+}

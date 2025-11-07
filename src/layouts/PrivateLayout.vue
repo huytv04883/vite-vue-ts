@@ -3,6 +3,7 @@ import { clearDataUser, getDataUser } from '@/helper/storage';
 import { useAuth } from '@/hooks/useAuth';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
+import CAvatar from '@/components/Avatar.vue';
 
 defineOptions({
   name: 'PrivateLayout',
@@ -28,7 +29,6 @@ const handleLogout = async () => {
   <header class="header">
     <h1 class="header__logo">LuLu Chat</h1>
     <el-dropdown placement="bottom-end">
-      <el-avatar :size="30" :src="user?.user?.photoURL" />
       <CAvatar :size="30" :src="user?.user?.photoURL" />
       <template #dropdown>
         <el-dropdown-menu>
