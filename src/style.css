@@ -30,3 +30,9 @@ body {
   height: 100vh;
   background: #fff;
 }
+
+main {
+  overflow: hidden;
+  height: calc(100vh - 78px);
+  min-height: calc(100vh - 78px);
+}
