@@ -3,9 +3,16 @@ import { PATH } from '@/constants/common';
 import { auth } from '@/firebase/config';
 import GuestLayout from '@/layouts/GuestLayout.vue';
 import PrivateLayout from '@/layouts/PrivateLayout.vue';
-import { computed } from 'vue';
+import { onAuthStateChanged } from 'firebase/auth';
+import { computed, onMounted, ref } from 'vue';
 
-const currentUser = computed(() => !!auth?.currentUser?.email);
+const currentUser = ref<boolean>(false);
+
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = !!user?.email;
+  });
+});
 
 const currentPage = computed(() => currentUser.value ? PATH.PRIVATE : PATH.PUBLIC);
 

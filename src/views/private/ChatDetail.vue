@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ChatInput from '@/components/ChatInput.vue';
-import MessageItem from '@/components/Conversation/MessageItem.vue';
+import MessageItem from '@/components/conversation/MessageItem.vue';
 import { getRecentMessages, listenMessages } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
