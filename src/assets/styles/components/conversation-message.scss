@@ -3,9 +3,9 @@
 
 .conversation {
   &-detail {
-    overflow-y: auto;
-    height: calc(100vh - 142px);
-    min-height: calc(100vh - 142px);
+    overflow: hidden;
+    height: calc(100vh - 78px);
+    min-height: calc(100vh - 78px);
     background-color: $gray-950;
   }
 }
@@ -47,7 +47,8 @@
   &-list {
     overflow-y: auto;
     padding: $spacing-4;
-    height: 100%;
+    height: calc(100vh - 149px);
+
     &.empty {
       display: flex;
       justify-content: center;
