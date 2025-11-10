@@ -45,7 +45,7 @@
   &-list {
     overflow-y: auto;
     padding: $spacing-4;
-    height: 100%;
+    height: calc(100vh - 133px);
 
     &.empty {
       display: flex;
