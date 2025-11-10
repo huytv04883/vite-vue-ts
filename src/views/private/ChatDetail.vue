@@ -51,7 +51,7 @@ const handleTypingUpdate = (isTyping: boolean) => {
 
 <template>
   <div class="conversation-detail">
-    <div v-if="msgs.length > 0" ref="messageListRef" class="message-list">
+    <div v-if="msgs.length > 0" ref="messageListRef" class="message-list" v-infinite-scroll="">
       <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
       <p v-if="isOtherTyping" class="typing">
         {{ chatStore.targetUser?.displayName }} is typing...
