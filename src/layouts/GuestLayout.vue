@@ -8,4 +8,3 @@ defineOptions({
     <slot />
   </main>
 </template>
-k

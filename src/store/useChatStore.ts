@@ -7,6 +7,7 @@ export const useChatStore = defineStore('chat', {
     return {
       roomChatId: ref<string | null>(null),
       targetUser: ref<User | null>(null),
+      isOtherTyping: ref<boolean>(false),
     };
   },
   actions: {
@@ -15,6 +16,10 @@ export const useChatStore = defineStore('chat', {
     },
     setTargetUser(user: User | null) {
       this.targetUser = user;
+    },
+    setIsOtherTyping(isTyping: boolean) {
+      console.log("isTyping", isTyping);
+      this.isOtherTyping = isTyping;
     },
   },
   persist: true,

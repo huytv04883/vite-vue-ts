@@ -27,7 +27,7 @@ const handleLogout = async () => {
 
 <template>
   <header class="header">
-    <h1 class="header__logo">LuLu Chat</h1>
+    <h1 class="header__logo" @click="router.push({ name: 'Dashboard' })">HH</h1>
     <el-dropdown placement="bottom-end">
       <CAvatar :size="30" :src="user?.user?.photoURL" />
       <template #dropdown>
