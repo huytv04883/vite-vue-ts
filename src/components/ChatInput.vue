@@ -1,7 +1,7 @@
 <template>
   <el-space :size="12" class="send-box">
     <div class="send-box__left">
-      <el-button :icon="DocumentCopy" circle plain title="Attach file" />
+      <el-button :icon="Burger" circle plain title="Attach file" />
     </div>
     <div class="send-box__right">
       <input
@@ -27,7 +27,8 @@
 import { getDataUser } from '@/helper/storage';
 import { listenTypingStatus, sendMessage, setTypingStatus } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
-import { DocumentCopy, Right as Send } from '@element-plus/icons-vue';
+import { Burger, Right as Send } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
 const chatStore = useChatStore();
 const user = getDataUser();
@@ -44,8 +45,6 @@ const emit = defineEmits(['update:setOtherTyping']);
 
 const handleTyping = () => {
   clearTimeout(typingTimeout);
-  console.log("runing......");
-  
   setTypingStatus(chatStore.roomChatId as string, user?.user?.uid as string, true);
   typingTimeout = setTimeout(() => {
     setTypingStatus(chatStore.roomChatId as string, user?.user?.uid as string, false);
@@ -57,8 +56,6 @@ onMounted(() => {
     chatStore.roomChatId as string,
     chatStore.targetUser?.uid as string,
     (isTyping: boolean) => {
-      console.log(isTyping);
-      
       emit('update:setOtherTyping', isTyping);
     },
   );
@@ -67,12 +64,18 @@ onMounted(() => {
 onUnmounted(() => unsubscribe && unsubscribe());
 
 const handleSend = async (): Promise<void> => {
-  sendMessage(
-    chatStore.roomChatId as string,
-    chatStore.targetUser?.uid as string,
-    message.value.trim(),
-  );
+  try {
+    if (!message.value.trim()) return;
+    sendMessage(
+      chatStore.roomChatId as string,
+      chatStore.targetUser?.uid as string,
+      message.value.trim(),
+    );
 
-  message.value = '';
+    message.value = '';
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
+  }
 };
 </script>

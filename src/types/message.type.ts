@@ -5,4 +5,5 @@ export interface Message {
   text: string;
   senderId: string;
   createdAt: Timestamp;
+  reactions?: string[];
 }

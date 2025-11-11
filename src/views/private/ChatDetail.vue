@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ChatInput from '@/components/ChatInput.vue';
 import MessageItem from '@/components/conversation/MessageItem.vue';
-import { getRecentMessages, listenMessages } from '@/services/chatService';
+import { getOlderMessages, getRecentMessages, listenMessages } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { nextTick, onMounted, ref } from 'vue';
@@ -11,6 +11,7 @@ const isOtherTyping = ref(false);
 const chatStore = useChatStore();
 const messageListRef = ref<HTMLDivElement | null>(null);
 const isFirstLoad = ref(true);
+const firstVisibleDoc = ref<unknown>(null);
 
 defineOptions({
   name: 'ChatDetail',
@@ -18,8 +19,6 @@ defineOptions({
 
 const scrollToBottom = async () => {
   await nextTick();
-  console.log('run');
-
   const el = messageListRef.value;
   if (el) {
     el.scrollTo({
@@ -29,17 +28,40 @@ const scrollToBottom = async () => {
   }
 };
 
+const handleScroll = async () => {
+  if (!messageListRef.value) return;
+  if (messageListRef.value.scrollTop === 0 && firstVisibleDoc.value) {
+    const prevHeight = messageListRef.value.scrollHeight;
+
+    const { messages: olderMessages, lastDoc } = await getOlderMessages(
+      chatStore.roomChatId as string,
+      firstVisibleDoc.value,
+    );
+    msgs.value.unshift(...(olderMessages as Message[]));
+    firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
+    await nextTick();
+    messageListRef.value.scrollTop = messageListRef.value.scrollHeight - prevHeight;
+  }
+};
+
 onMounted(async () => {
-  const { messages: recent, lastDoc: lastDoc } = await getRecentMessages(
-    chatStore.roomChatId as string,
-  );
-  msgs.value = recent;
+  const {
+    messages: recent,
+    firstDoc,
+    lastDoc,
+  } = await getRecentMessages(chatStore.roomChatId as string);
+  msgs.value = [...recent];
+
+  firstVisibleDoc.value = firstDoc;
   if (isFirstLoad.value) {
     scrollToBottom();
     isFirstLoad.value = false;
   }
+
   listenMessages(chatStore.roomChatId as string, lastDoc, async (messages) => {
-    msgs.value.push(...messages);
+    const existingIds = new Set(msgs.value.map((msg) => msg.id));
+    const newMessages = messages.filter((msg) => !existingIds.has(msg.id));
+    msgs.value = [...msgs.value, ...newMessages];
     scrollToBottom();
   });
 });
@@ -48,10 +70,14 @@ const handleTypingUpdate = (isTyping: boolean) => {
   isOtherTyping.value = isTyping;
 };
 </script>
-
 <template>
   <div class="conversation-detail">
-    <div v-if="msgs.length > 0" ref="messageListRef" class="message-list" v-infinite-scroll="">
+    <div
+      v-if="msgs.length > 0"
+      ref="messageListRef"
+      class="message-list"
+      @scroll.passive="handleScroll"
+    >
       <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
       <p v-if="isOtherTyping" class="typing">
         {{ chatStore.targetUser?.displayName }} is typing...

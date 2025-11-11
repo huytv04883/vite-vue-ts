@@ -60,9 +60,12 @@ export const listenMessages = (
 
   return onSnapshot(q, (snapshot) => {
     const added = snapshot.docChanges().filter((c) => c.type === 'added');
-    if (added.length) {
+    const modified = snapshot.docChanges().filter((c) => c.type === 'modified');
+
+    if (added.length || modified.length) {
       const newMsgs = added.map((c) => ({ id: c.doc.id, ...c.doc.data() }));
-      callback(newMsgs as Message[]);
+      const updatedMsgs = modified.map((c) => ({ id: c.doc.id, ...c.doc.data() }));
+      callback([...newMsgs, ...updatedMsgs] as Message[]);
     }
   });
 };
@@ -90,18 +93,21 @@ export const listenTypingStatus = (
 export const getRecentMessages = async (chatId: string, pageSize = LIMIT_MESSAGES) => {
   const q = query(
     collection(db, 'chats', chatId, 'messages'),
-    orderBy('createdAt', 'asc'),
+    orderBy('createdAt', 'desc'),
     limit(pageSize),
   );
 
   const snapshot = await getDocs(q);
-  const messages = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Message[];
+  const messages = snapshot.docs
+    .map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    .reverse() as Message[]; // Reverse to get oldest-to-newest order
 
-  const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-  return { messages, lastDoc };
+  const firstDoc = snapshot.docs[snapshot.docs.length - 1]; // The oldest doc (for backward pagination)
+  const lastDoc = snapshot.docs[0]; // The newest doc (for forward/real-time listening)
+  return { messages, firstDoc, lastDoc };
 };
 
 export const getOlderMessages = async (
@@ -117,10 +123,12 @@ export const getOlderMessages = async (
   );
 
   const snapshot = await getDocs(q);
-  const messages = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const messages = snapshot.docs
+    .map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    .reverse(); // Reverse to match ascending order
 
   const newLastDoc = snapshot.docs[snapshot.docs.length - 1];
   return { messages, lastDoc: newLastDoc };

@@ -18,7 +18,6 @@ export const useChatStore = defineStore('chat', {
       this.targetUser = user;
     },
     setIsOtherTyping(isTyping: boolean) {
-      console.log("isTyping", isTyping);
       this.isOtherTyping = isTyping;
     },
   },
