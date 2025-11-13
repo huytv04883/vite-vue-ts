@@ -60,6 +60,7 @@
   &-list {
     overflow-y: auto;
     padding: $spacing-4;
+    height: calc(100% - 60px);
 
     &.empty {
       display: flex;
