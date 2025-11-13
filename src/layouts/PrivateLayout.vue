@@ -9,6 +9,8 @@ defineOptions({
 <template>
   <div class="private-layout">
     <AppHeader />
-    <slot />
+    <div class="private-layout__content">
+      <slot />
+    </div>
   </div>
 </template>
