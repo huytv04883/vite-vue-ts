@@ -4,6 +4,8 @@ import { auth } from '@/firebase/config';
 import { clearDataUser } from '@/helper/storage';
 import { useAuth } from '@/hooks/useAuth';
 import router from '@/router';
+import { useAppStore } from '@/store/appStore';
+import { Edit } from '@element-plus/icons-vue';
 import { onClickOutside } from '@vueuse/core';
 import { ElMessage } from 'element-plus';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -17,6 +19,7 @@ const { logout } = useAuth();
 const isShowDropdown = ref(false);
 const dataUser = ref<User | null>(null);
 const dropdownRef = useTemplateRef<HTMLElement>('dropdownRef');
+const appStore = useAppStore();
 
 onClickOutside(dropdownRef, () => {
   isShowDropdown.value = false;
@@ -46,6 +49,9 @@ const handleLogout = async () => {
   <header class="header">
     <h1 class="header__logo" @click="router.push({ name: 'Dashboard' })">HH</h1>
     <div class="header__right" ref="dropdownRef">
+      <button class="header__edit">
+        <el-icon @click="appStore.setOpenCreateGroupPopover(true)"><Edit /></el-icon>
+      </button>
       <el-avatar
         :size="30"
         :src="dataUser?.photoURL ?? fallbackAavatar"

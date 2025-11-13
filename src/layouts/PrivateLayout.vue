@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppHeader from '@/components/common/Header.vue';
+import CreateGroupPopover from '@/components/CreateGroupPopover.vue';
 
 defineOptions({
   name: 'PrivateLayout',
@@ -12,5 +13,6 @@ defineOptions({
     <div class="private-layout__content">
       <slot />
     </div>
+    <CreateGroupPopover />
   </div>
 </template>

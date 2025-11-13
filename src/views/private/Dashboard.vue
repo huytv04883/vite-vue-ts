@@ -13,7 +13,6 @@ defineOptions({
 });
 
 const chatStore = useChatStore();
-
 const users = ref<User[] | null>(null);
 const groupChats = ref<unknown[]>([]);
 
