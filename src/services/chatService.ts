@@ -72,15 +72,15 @@ export const setTypingStatus = async (chatId: string, userId: string, isTyping: 
 
 export const listenTypingStatus = (
   chatId: string,
-  otherUserId: string,
+  targetUserId: string,
   callback: (isTyping: boolean) => void,
 ) => {
   const chatRef = doc(db, 'chats', chatId);
 
   return onSnapshot(chatRef, (snap) => {
     const data = snap.data();
-    if (data?.typing && data.typing[otherUserId] !== undefined) {
-      callback(data.typing[otherUserId]);
+    if (data?.typing && data.typing[targetUserId] !== undefined) {
+      callback(data.typing[targetUserId]);
     }
   });
 };

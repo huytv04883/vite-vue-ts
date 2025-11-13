@@ -38,11 +38,12 @@
 }
 
 .send-box {
-  padding: $spacing-4 0 0;
+  padding: 0 $spacing-4;
   display: grid;
   grid-template-columns: 32px 1fr;
   justify-content: space-between;
   background: $white;
+  min-height: 60px;
 
   &__right {
     display: flex;
@@ -70,7 +71,6 @@
   &-list {
     overflow-y: auto;
     padding: $spacing-4;
-    height: calc(100vh - 133px);
 
     &.empty {
       display: flex;

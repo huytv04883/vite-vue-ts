@@ -5,8 +5,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: $spacing-4;
-  z-index: 999;
+  height: 46px;
+  padding: 0 $spacing-4;
 
   &__logo {
     font-size: 1.5rem;

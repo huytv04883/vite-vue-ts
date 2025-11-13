@@ -66,11 +66,7 @@ onUnmounted(() => unsubscribe && unsubscribe());
 const handleSend = async (): Promise<void> => {
   try {
     if (!message.value.trim()) return;
-    sendMessage(
-      chatStore.roomChatId as string,
-      chatStore.targetUser?.uid as string,
-      message.value.trim(),
-    );
+    sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, message.value.trim());
 
     message.value = '';
   } catch (error) {
