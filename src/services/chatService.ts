@@ -56,6 +56,7 @@ export const listenMessages = (chatId: string, callback: (msgs: Message[]) => vo
       .filter((c) => c.type === 'added' || c.type === 'modified')
       .map((msg) => ({
         id: msg.doc.id,
+        type: msg.type,
         ...msg.doc.data(),
       }));
 

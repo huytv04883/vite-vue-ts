@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { getDataUser } from '@/helper/storage';
 import { listenTypingStatus, sendMessage, setTypingStatus } from '@/services/chatService';
-import { useChatStore } from '@/store/useChatStore';
+import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Burger, Right as Send } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
@@ -66,7 +66,13 @@ onUnmounted(() => unsubscribe && unsubscribe());
 const handleSend = async (): Promise<void> => {
   try {
     if (!message.value.trim()) return;
-    sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, message.value.trim());
+    sendMessage(
+      chatStore.roomChatId as string,
+      user?.user?.uid as string,
+      message.value.trim(),
+    ).then(() => {
+      chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
+    });
 
     message.value = '';
   } catch (error) {

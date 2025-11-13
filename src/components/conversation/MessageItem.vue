@@ -43,7 +43,7 @@ import '@/assets/styles/components/conversation-message.scss';
 import { emojis } from '@/constants/emoji';
 import { getDataUser } from '@/helper/storage';
 import { toggleReaction } from '@/services/reactionService';
-import { useChatStore } from '@/store/useChatStore';
+import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { formatFirestoreDate } from '@/utils/date';
 import { ElMessage, ElPopover } from 'element-plus';
@@ -92,6 +92,7 @@ const handleReact = async (emoji: string) => {
       user?.user?.uid as string,
       emoji,
     ).then(() => {
+      chatStore.setChatAction(CHAT_ACTION.REACT_TO_MESSAGE);
       emojisPopoverRef.value?.hide();
     });
   } catch (error) {

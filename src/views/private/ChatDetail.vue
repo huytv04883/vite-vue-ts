@@ -50,7 +50,6 @@ onMounted(async () => {
 
   firstVisibleDoc.value = firstDoc;
   if (isFirstLoad.value) {
-    scrollToBottom();
     isFirstLoad.value = false;
   }
 
@@ -60,8 +59,8 @@ onMounted(async () => {
       msgs.value[existingMsgIndex] = messages[0];
     } else {
       msgs.value.push(messages[0]);
+      scrollToBottom();
     }
-    scrollToBottom();
   });
 });
 

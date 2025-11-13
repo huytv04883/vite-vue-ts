@@ -42,7 +42,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
     loading.value = true;
     try {
       await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password)
-        .then((res) => {
+        .then(async (res) => {
           if (!res) return;
           ElMessage({
             message: 'Login successful!',
@@ -51,6 +51,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
           });
           router.authUser = res.user;
           setDataUser(res);
+          await saveUserIfNotExists();
           router.push({ name: 'Dashboard' });
         })
         .finally(() => {

@@ -1,3 +1,4 @@
+import { DocumentChangeType } from "firebase/firestore";
 import { Timestamp } from "./base.type";
 
 export interface Message {
@@ -6,4 +7,5 @@ export interface Message {
   senderId: string;
   createdAt: Timestamp;
   reactions?: string[];
+  type: DocumentChangeType;
 }

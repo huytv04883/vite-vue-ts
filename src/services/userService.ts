@@ -1,6 +1,14 @@
 import { auth, db } from '@/firebase/config';
 import { User } from '@/types/user.type';
-import { doc, setDoc, serverTimestamp, getDoc, getDocs, collection } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 
 export const saveUserIfNotExists = async () => {
   const user = auth.currentUser;
@@ -20,8 +28,23 @@ export const saveUserIfNotExists = async () => {
   }
 };
 
+export const updateUserProfile = async (uid: string, displayName?: string, photoURL?: string) => {
+  const user = auth.currentUser;
+  if (!user || user.uid !== uid) return;
+  const userRef = doc(db, 'users', uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return;
+
+  await updateDoc(userRef, {
+    displayName: displayName ?? '',
+    photoURL: photoURL ?? '',
+  });
+};
+
 export const getRandomUsers = async (limitCount = 10) => {
   const currentUser = auth.currentUser;
+  console.log(currentUser);
+
   const querySnapshot = await getDocs(collection(db, 'users'));
   const allUsers: User[] = [];
 

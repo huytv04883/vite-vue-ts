@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { auth } from '@/firebase/config';
 import router from '@/router';
+import { saveUserIfNotExists } from '@/services/userService';
 import type { LoginForm } from '@/types/login.type';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
@@ -39,7 +40,7 @@ const handleRegister = async () => {
     loading.value = true;
     try {
       await createUserWithEmailAndPassword(auth, registerForm.email, registerForm.password)
-        .then((res) => {
+        .then(async (res) => {
           if (!res) return;
           ElMessage({
             message: 'Registration successful!',
@@ -47,7 +48,9 @@ const handleRegister = async () => {
             plain: true,
           });
           router.authUser = res.user;
-          router.push({ name: 'Dashboard' });
+          await saveUserIfNotExists().then(() => {
+            router.push({ name: 'Login' });
+          });
         })
         .finally(() => {
           loading.value = false;
@@ -79,7 +82,12 @@ const handleRegister = async () => {
             <input v-model="registerForm.email" class="register__input" placeholder="Email" />
           </el-form-item>
           <el-form-item label="Password" prop="password">
-            <input type="password" v-model="registerForm.password" class="register__input" placeholder="Password" />
+            <input
+              type="password"
+              v-model="registerForm.password"
+              class="register__input"
+              placeholder="Password"
+            />
           </el-form-item>
         </div>
         <el-button
