@@ -1,9 +1,0 @@
-.private-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.conversation-detail {
-  height: calc(100% - 46px);
-}

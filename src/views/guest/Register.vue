@@ -62,38 +62,40 @@ const handleRegister = async () => {
 </script>
 
 <template>
-  <div class="register">
-    <h2 class="register__title">Register</h2>
-    <el-form
-      ref="registerFormRef"
-      :rules="rules"
-      :model="registerForm"
-      class="register__form"
-      label-width="100px"
-      label-position="left"
-      @submit.prevent="handleRegister"
-    >
-      <div class="register__form-group">
-        <el-form-item label="Email" prop="email">
-          <input v-model="registerForm.email" class="register__input" placeholder="Email" />
-        </el-form-item>
-        <el-form-item label="Password" prop="password">
-          <input v-model="registerForm.password" class="register__input" placeholder="Password" />
-        </el-form-item>
-      </div>
-      <el-button
-        type="primary"
-        :class="{ 'register__button--loading': loading }"
-        :loading="loading"
-        native-type="submit"
+  <div class="register-page">
+    <div class="register-form">
+      <h2 class="register__title">Register</h2>
+      <el-form
+        ref="registerFormRef"
+        :rules="rules"
+        :model="registerForm"
+        class="register__form"
+        label-width="100px"
+        label-position="left"
+        @submit.prevent="handleRegister"
       >
-        {{ loading ? 'Registering...' : 'Register' }}
-      </el-button>
-    </el-form>
-    <p v-if="error" class="register__error">{{ error }}</p>
-    <div class="register__link">
-      Already have an account?
-      <router-link to="/login">Login</router-link>
+        <div class="register__form-group">
+          <el-form-item label="Email" prop="email">
+            <input v-model="registerForm.email" class="register__input" placeholder="Email" />
+          </el-form-item>
+          <el-form-item label="Password" prop="password">
+            <input type="password" v-model="registerForm.password" class="register__input" placeholder="Password" />
+          </el-form-item>
+        </div>
+        <el-button
+          type="primary"
+          :class="{ 'register__button--loading': loading }"
+          :loading="loading"
+          native-type="submit"
+        >
+          {{ loading ? 'Registering...' : 'Register' }}
+        </el-button>
+      </el-form>
+      <p v-if="error" class="register__error">{{ error }}</p>
+      <div class="register__link">
+        Already have an account?
+        <router-link to="/login">Login</router-link>
+      </div>
     </div>
   </div>
 </template>

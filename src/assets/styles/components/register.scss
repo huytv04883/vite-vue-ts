@@ -2,14 +2,23 @@
 @use '../_mixins' as *;
 
 .register {
-  @include flex-column;
-  gap: $spacing-4;
-  max-width: 400px;
-  margin: auto;
-  padding: $spacing-6;
-  background: $white;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
+  &-page {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-form {
+    @include flex-column;
+    gap: $spacing-4;
+    max-width: 400px;
+    margin: auto;
+    width: 100%;
+    padding: $spacing-6;
+  }
 
   &__title {
     @include heading-2;

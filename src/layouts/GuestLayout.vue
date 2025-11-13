@@ -4,7 +4,5 @@ defineOptions({
 });
 </script>
 <template>
-  <main>
-    <slot />
-  </main>
+  <slot />
 </template>

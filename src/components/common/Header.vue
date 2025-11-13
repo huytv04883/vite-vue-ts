@@ -1,21 +1,31 @@
 <script setup lang="ts">
-import { clearDataUser, getDataUser } from '@/helper/storage';
+import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
+import { auth } from '@/firebase/config';
+import { clearDataUser } from '@/helper/storage';
 import { useAuth } from '@/hooks/useAuth';
 import router from '@/router';
 import { onClickOutside } from '@vueuse/core';
 import { ElMessage } from 'element-plus';
-import { ref, useTemplateRef } from 'vue';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { onMounted, ref, useTemplateRef } from 'vue';
 
 defineOptions({
   name: 'AppHeader',
 });
-const user = getDataUser();
+
 const { logout } = useAuth();
 const isShowDropdown = ref(false);
+const dataUser = ref<User | null>(null);
 const dropdownRef = useTemplateRef<HTMLElement>('dropdownRef');
 
 onClickOutside(dropdownRef, () => {
   isShowDropdown.value = false;
+});
+
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    dataUser.value = user;
+  });
 });
 
 const handleLogout = async () => {
@@ -36,7 +46,12 @@ const handleLogout = async () => {
   <header class="header">
     <h1 class="header__logo" @click="router.push({ name: 'Dashboard' })">HH</h1>
     <div class="header__right" ref="dropdownRef">
-      <el-avatar :size="30" :src="user?.user?.photoURL" @click="isShowDropdown = !isShowDropdown" />
+      <el-avatar
+        :size="30"
+        :src="dataUser?.photoURL ?? fallbackAavatar"
+        @click="isShowDropdown = !isShowDropdown"
+        :key="dataUser?.uid"
+      />
       <ul v-if="isShowDropdown">
         <li>Profile</li>
         <li @click="handleLogout">Logout</li>

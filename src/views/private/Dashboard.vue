@@ -32,7 +32,7 @@ const handleCreateChat = async (targetUser: User) => {
     <div class="user-list">
       <ul>
         <li v-for="user in users" :key="user.uid" @click="handleCreateChat(user)">
-          <el-avatar :src="user.photoURL" alt="User Avatar" />
+          <el-avatar :src="user.photoURL" :size="30" alt="User Avatar" />
           <span>{{ user.displayName }}</span>
         </li>
       </ul>
