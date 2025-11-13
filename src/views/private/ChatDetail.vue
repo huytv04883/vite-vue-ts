@@ -70,17 +70,21 @@ const handleTypingUpdate = (isTyping: boolean) => {
 };
 </script>
 <template>
-  <div
-    v-if="msgs.length > 0"
-    ref="messageListRef"
-    class="message-list"
-    @scroll.passive="handleScroll"
-  >
-    <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
-    <p v-if="isOtherTyping" class="typing">{{ chatStore.targetUser?.displayName }} is typing...</p>
+  <div class="conversation-detail">
+    <!-- <div
+      v-if="msgs.length > 0"
+      ref="messageListRef"
+      class="message-list"
+      @scroll.passive="handleScroll"
+    >
+      <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
+      <p v-if="isOtherTyping" class="typing">
+        {{ chatStore.targetUser?.displayName }} is typing...
+      </p>
+    </div>
+    <div v-else class="message-list empty">
+      <p class="no-message">No messages yet. Start the conversation!</p>
+    </div>
+    <ChatInput @update:set-other-typing="handleTypingUpdate" /> -->
   </div>
-  <div v-else class="message-list empty">
-    <p class="no-message">No messages yet. Start the conversation!</p>
-  </div>
-  <ChatInput @update:set-other-typing="handleTypingUpdate" />
 </template>

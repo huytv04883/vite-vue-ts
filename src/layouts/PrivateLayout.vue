@@ -7,8 +7,8 @@ defineOptions({
 </script>
 
 <template>
-  <AppHeader />
-  <main>
+  <div class="private-layout">
+    <AppHeader />
     <slot />
-  </main>
+  </div>
 </template>
