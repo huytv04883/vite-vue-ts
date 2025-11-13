@@ -1,73 +1,73 @@
 <script setup lang="ts">
-import ChatInput from '@/components/ChatInput.vue';
-import MessageItem from '@/components/conversation/MessageItem.vue';
-import { getOlderMessages, getRecentMessages, listenMessages } from '@/services/chatService';
-import { useChatStore } from '@/store/useChatStore';
-import { Message } from '@/types/message.type';
-import { nextTick, onMounted, ref } from 'vue';
+// import ChatInput from '@/components/ChatInput.vue';
+// import MessageItem from '@/components/conversation/MessageItem.vue';
+// import { getOlderMessages, getRecentMessages, listenMessages } from '@/services/chatService';
+// import { useChatStore } from '@/store/useChatStore';
+// import { Message } from '@/types/message.type';
+// import { nextTick, onMounted, ref } from 'vue';
 
-const msgs = ref<Message[]>([]);
-const isOtherTyping = ref(false);
-const chatStore = useChatStore();
-const messageListRef = ref<HTMLDivElement | null>(null);
-const isFirstLoad = ref(true);
-const firstVisibleDoc = ref<unknown>(null);
+// const msgs = ref<Message[]>([]);
+// const isOtherTyping = ref(false);
+// const chatStore = useChatStore();
+// const messageListRef = ref<HTMLDivElement | null>(null);
+// const isFirstLoad = ref(true);
+// const firstVisibleDoc = ref<unknown>(null);
 
 defineOptions({
   name: 'ChatDetail',
 });
 
-const scrollToBottom = async () => {
-  await nextTick();
-  const el = messageListRef.value;
-  if (el) {
-    el.scrollTo({
-      top: el.scrollHeight,
-      behavior: 'smooth',
-    });
-  }
-};
+// const scrollToBottom = async () => {
+//   await nextTick();
+//   const el = messageListRef.value;
+//   if (el) {
+//     el.scrollTo({
+//       top: el.scrollHeight,
+//       behavior: 'smooth',
+//     });
+//   }
+// };
 
-const handleScroll = async () => {
-  if (!messageListRef.value) return;
-  if (messageListRef.value.scrollTop === 0 && firstVisibleDoc.value) {
-    const prevHeight = messageListRef.value.scrollHeight;
+// const handleScroll = async () => {
+//   if (!messageListRef.value) return;
+//   if (messageListRef.value.scrollTop === 0 && firstVisibleDoc.value) {
+//     const prevHeight = messageListRef.value.scrollHeight;
 
-    const { messages: olderMessages, lastDoc } = await getOlderMessages(
-      chatStore.roomChatId as string,
-      firstVisibleDoc.value,
-    );
-    msgs.value.unshift(...(olderMessages as Message[]));
-    firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
-    await nextTick();
-    messageListRef.value.scrollTop = messageListRef.value.scrollHeight - prevHeight;
-  }
-};
+//     const { messages: olderMessages, lastDoc } = await getOlderMessages(
+//       chatStore.roomChatId as string,
+//       firstVisibleDoc.value,
+//     );
+//     msgs.value.unshift(...(olderMessages as Message[]));
+//     firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
+//     await nextTick();
+//     messageListRef.value.scrollTop = messageListRef.value.scrollHeight - prevHeight;
+//   }
+// };
 
-onMounted(async () => {
-  const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
-  msgs.value = [...recent];
+// onMounted(async () => {
+//   const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
+//   msgs.value = [...recent];
 
-  firstVisibleDoc.value = firstDoc;
-  if (isFirstLoad.value) {
-    scrollToBottom();
-    isFirstLoad.value = false;
-  }
+//   firstVisibleDoc.value = firstDoc;
+//   if (isFirstLoad.value) {
+//     scrollToBottom();
+//     isFirstLoad.value = false;
+//   }
 
-  listenMessages(chatStore.roomChatId as string, async (messages) => {
-    const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
-    if (existingMsgIndex !== -1) {
-      msgs.value[existingMsgIndex] = messages[0];
-    } else {
-      msgs.value.push(messages[0]);
-    }
-    scrollToBottom();
-  });
-});
+//   listenMessages(chatStore.roomChatId as string, async (messages) => {
+//     const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
+//     if (existingMsgIndex !== -1) {
+//       msgs.value[existingMsgIndex] = messages[0];
+//     } else {
+//       msgs.value.push(messages[0]);
+//     }
+//     scrollToBottom();
+//   });
+// });
 
-const handleTypingUpdate = (isTyping: boolean) => {
-  isOtherTyping.value = isTyping;
-};
+// const handleTypingUpdate = (isTyping: boolean) => {
+//   isOtherTyping.value = isTyping;
+// };
 </script>
 <template>
   <div class="conversation-detail">
