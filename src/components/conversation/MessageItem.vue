@@ -21,9 +21,15 @@
             {{ message.text }}
           </div>
           <div class="chat-message__time">{{ formatFirestoreDate(message.createdAt) }}</div>
-          <div v-if="!!emojisAdded.length" class="mt-1 flex gap-1">
-            <span class="text-xl">
-              {{ Array.isArray(emojisAdded) ? emojisAdded.join(' ') : emojisAdded }}
+          <div v-if="!!emojisAdded.length">
+            <span class="emojis-added">
+              {{
+                Array.isArray(emojisAdded)
+                  ? emojisAdded.length > 3
+                    ? emojisAdded.slice(0, 3).join(' ') + ' ' + (emojisAdded.length - 3) + '+'
+                    : emojisAdded.join(' ')
+                  : emojisAdded
+              }}
             </span>
           </div>
         </div>
@@ -41,7 +47,7 @@ import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { formatFirestoreDate } from '@/utils/date';
 import { ElMessage, ElPopover } from 'element-plus';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import CAvatar from '../Avatar.vue';
 
 const chatStore = useChatStore();
@@ -56,6 +62,26 @@ defineOptions({
 const props = defineProps<{
   message: Message;
 }>();
+
+watch(
+  () => props.message.reactions,
+  (reactions) => {
+    if (reactions && typeof reactions === 'object') {
+      const allEmojis: string[] = [];
+      Object.values(reactions).forEach((reactsMsg) => {
+        if (Array.isArray(reactsMsg)) {
+          allEmojis.push(...reactsMsg);
+          return;
+        }
+        allEmojis.push(reactsMsg);
+      });
+      emojisAdded.value = allEmojis;
+    } else {
+      emojisAdded.value = [];
+    }
+  },
+  { immediate: true, deep: true },
+);
 
 const handleReact = async (emoji: string) => {
   if (!emoji) return;
@@ -83,17 +109,5 @@ const avatarUrl = computed(() => {
 });
 const nameUser = computed(() => {
   return isOwnMessage.value ? user?.user?.displayName : chatStore.targetUser?.displayName;
-});
-
-onMounted(() => {
-  if (props.message.reactions) {
-    const userId = user?.user?.uid;
-    if (userId && props.message.reactions[userId as keyof typeof props.message.reactions]) {
-      const userReactions = props.message.reactions[userId as keyof typeof props.message.reactions];
-      emojisAdded.value = Array.isArray(userReactions) ? userReactions : [userReactions as string];
-    } else {
-      emojisAdded.value = [];
-    }
-  }
 });
 </script>

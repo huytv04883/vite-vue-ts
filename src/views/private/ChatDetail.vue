@@ -45,11 +45,7 @@ const handleScroll = async () => {
 };
 
 onMounted(async () => {
-  const {
-    messages: recent,
-    firstDoc,
-    lastDoc,
-  } = await getRecentMessages(chatStore.roomChatId as string);
+  const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
   msgs.value = [...recent];
 
   firstVisibleDoc.value = firstDoc;
@@ -58,10 +54,13 @@ onMounted(async () => {
     isFirstLoad.value = false;
   }
 
-  listenMessages(chatStore.roomChatId as string, lastDoc, async (messages) => {
-    const existingIds = new Set(msgs.value.map((msg) => msg.id));
-    const newMessages = messages.filter((msg) => !existingIds.has(msg.id));
-    msgs.value = [...msgs.value, ...newMessages];
+  listenMessages(chatStore.roomChatId as string, async (messages) => {
+    const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
+    if (existingMsgIndex !== -1) {
+      msgs.value[existingMsgIndex] = messages[0];
+    } else {
+      msgs.value.push(messages[0]);
+    }
     scrollToBottom();
   });
 });

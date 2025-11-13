@@ -47,25 +47,20 @@ export const sendMessage = async (chatId: string, senderId: string, text: string
   });
 };
 
-export const listenMessages = (
-  chatId: string,
-  lastDoc: unknown,
-  callback: (msgs: Message[]) => void,
-) => {
-  const q = query(
-    collection(db, 'chats', chatId, 'messages'),
-    orderBy('createdAt', 'asc'),
-    ...(lastDoc ? [startAfter(lastDoc)] : []), // if first load, not listen from lastDoc
-  );
+export const listenMessages = (chatId: string, callback: (msgs: Message[]) => void) => {
+  const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
 
   return onSnapshot(q, (snapshot) => {
-    const added = snapshot.docChanges().filter((c) => c.type === 'added');
-    const modified = snapshot.docChanges().filter((c) => c.type === 'modified');
+    const messagesResult = snapshot
+      .docChanges()
+      .filter((c) => c.type === 'added' || c.type === 'modified')
+      .map((msg) => ({
+        id: msg.doc.id,
+        ...msg.doc.data(),
+      }));
 
-    if (added.length || modified.length) {
-      const newMsgs = added.map((c) => ({ id: c.doc.id, ...c.doc.data() }));
-      const updatedMsgs = modified.map((c) => ({ id: c.doc.id, ...c.doc.data() }));
-      callback([...newMsgs, ...updatedMsgs] as Message[]);
+    if (messagesResult.length > 0) {
+      callback([...messagesResult] as Message[]);
     }
   });
 };
