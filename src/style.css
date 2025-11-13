@@ -11,5 +11,4 @@
 main {
   overflow: hidden;
   height: calc(100% - 46px);
-  min-height: calc(100% - 46px);
 }

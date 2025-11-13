@@ -27,7 +27,7 @@
     align-items: center;
     gap: $spacing-1;
   }
-  
+
   &-added {
     font-size: $font-size-sm;
     color: $gray-700;
@@ -71,6 +71,7 @@
   &-list {
     overflow-y: auto;
     padding: $spacing-4;
+    height: calc(100vh - 106px);
 
     &.empty {
       display: flex;
