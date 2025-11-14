@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
+import logoUrl from '@/assets/imgs/ss.png';
 import { auth } from '@/firebase/config';
 import { clearDataUser } from '@/helper/storage';
 import { useAuth } from '@/hooks/useAuth';
@@ -47,10 +48,12 @@ const handleLogout = async () => {
 </script>
 <template>
   <header class="header">
-    <h1 class="header__logo" @click="router.push({ name: 'Dashboard' })">HH</h1>
+    <h1 class="header__logo" @click="router.push({ name: 'Dashboard' })">
+      <img :src="logoUrl" alt="Logo" width="35" height="35" fit="contain" />
+    </h1>
     <div class="header__right" ref="dropdownRef">
-      <button class="header__edit">
-        <el-icon @click="appStore.setOpenCreateGroupPopover(true)"><Edit /></el-icon>
+      <button class="header__edit" @click="appStore.setOpenCreateGroupPopover(true)">
+        <el-icon><Edit /></el-icon>
       </button>
       <el-avatar
         :size="30"

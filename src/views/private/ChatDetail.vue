@@ -4,6 +4,7 @@ import MessageItem from '@/components/conversation/MessageItem.vue';
 import { getOlderMessages, getRecentMessages, listenMessages } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
+import { ElMessage } from 'element-plus';
 import { nextTick, onMounted, ref } from 'vue';
 
 const msgs = ref<Message[]>([]);
@@ -12,6 +13,7 @@ const chatStore = useChatStore();
 const messageListRef = ref<HTMLDivElement | null>(null);
 const isFirstLoad = ref(true);
 const firstVisibleDoc = ref<unknown>(null);
+const loading = ref(false);
 
 defineOptions({
   name: 'ChatDetail',
@@ -29,39 +31,59 @@ const scrollToBottom = async () => {
 };
 
 const handleScroll = async () => {
-  if (!messageListRef.value) return;
-  if (messageListRef.value.scrollTop === 0 && firstVisibleDoc.value) {
-    const prevHeight = messageListRef.value.scrollHeight;
+  loading.value = true;
+  try {
+    if (!messageListRef.value) return;
+    if (messageListRef.value.scrollTop === 0 && firstVisibleDoc.value) {
+      const prevHeight = messageListRef.value.scrollHeight;
 
-    const { messages: olderMessages, lastDoc } = await getOlderMessages(
-      chatStore.roomChatId as string,
-      firstVisibleDoc.value,
-    );
-    msgs.value.unshift(...(olderMessages as Message[]));
-    firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
-    await nextTick();
-    messageListRef.value.scrollTop = messageListRef.value.scrollHeight - prevHeight;
+      const { messages: olderMessages, lastDoc } = await getOlderMessages(
+        chatStore.roomChatId as string,
+        firstVisibleDoc.value,
+      );
+      msgs.value.unshift(...(olderMessages as Message[]));
+      firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
+      await nextTick();
+      messageListRef.value.scrollTop = messageListRef.value.scrollHeight - prevHeight;
+    }
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
+  } finally {
+    loading.value = false;
+  }
+};
+
+const fetchInitialMessages = async () => {
+  loading.value = true;
+  try {
+    const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
+    msgs.value = [...recent];
+
+    firstVisibleDoc.value = firstDoc;
+    if (isFirstLoad.value) {
+      isFirstLoad.value = false;
+    }
+
+    listenMessages(chatStore.roomChatId as string, async (messages) => {
+      const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
+      if (existingMsgIndex !== -1) {
+        msgs.value[existingMsgIndex] = messages[0];
+      } else {
+        msgs.value.push(messages[0]);
+        scrollToBottom();
+      }
+    });
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
+  } finally {
+    loading.value = false;
   }
 };
 
 onMounted(async () => {
-  const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
-  msgs.value = [...recent];
-
-  firstVisibleDoc.value = firstDoc;
-  if (isFirstLoad.value) {
-    isFirstLoad.value = false;
-  }
-
-  listenMessages(chatStore.roomChatId as string, async (messages) => {
-    const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
-    if (existingMsgIndex !== -1) {
-      msgs.value[existingMsgIndex] = messages[0];
-    } else {
-      msgs.value.push(messages[0]);
-      scrollToBottom();
-    }
-  });
+  await fetchInitialMessages();
 });
 
 const handleTypingUpdate = (isTyping: boolean) => {
@@ -71,19 +93,19 @@ const handleTypingUpdate = (isTyping: boolean) => {
 <template>
   <div class="conversation-detail">
     <div
-      v-if="msgs.length > 0"
       ref="messageListRef"
       class="message-list"
       @scroll.passive="handleScroll"
+      v-loading="loading"
     >
       <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
       <p v-if="isOtherTyping" class="typing">
         {{ chatStore.targetUser?.displayName }} is typing...
       </p>
     </div>
-    <div v-else class="message-list empty">
+    <!-- <div v-else class="message-list empty">
       <p class="no-message">No messages yet. Start the conversation!</p>
-    </div>
+    </div> -->
     <ChatInput @update:set-other-typing="handleTypingUpdate" />
   </div>
 </template>

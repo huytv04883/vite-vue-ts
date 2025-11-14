@@ -7,6 +7,8 @@
 @use './components/home.scss';
 @use './components/chat.scss';
 @use './components/conversation-message.scss';
+@use './components/popover.scss';
+@use './components/create-group.scss';
 
 // Global styles
 * {

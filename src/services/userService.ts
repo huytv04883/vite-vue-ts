@@ -43,8 +43,6 @@ export const updateUserProfile = async (uid: string, displayName?: string, photo
 
 export const getRandomUsers = async (limitCount = 10) => {
   const currentUser = auth.currentUser;
-  console.log(currentUser);
-
   const querySnapshot = await getDocs(collection(db, 'users'));
   const allUsers: User[] = [];
 

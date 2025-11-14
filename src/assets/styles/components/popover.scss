@@ -1,0 +1,13 @@
+@use '../_variables' as *;
+@use '../_mixins' as *;
+
+.app-popover {
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-1 0;
+    border: none;
+    background: transparent;
+  }
+}
