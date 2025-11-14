@@ -106,7 +106,7 @@ const handleGoogleLogin = async () => {
             <input v-model="loginForm.email" class="login__input" placeholder="Email" />
           </el-form-item>
           <el-form-item label="Password" prop="password">
-            <input v-model="loginForm.password" class="login__input" placeholder="Password" />
+            <input type="password" v-model="loginForm.password" class="login__input" placeholder="Password" />
           </el-form-item>
         </div>
         <el-button

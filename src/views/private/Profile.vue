@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import { updateUserProfile } from '@/services/userService';
 import {
   Camera,
   Edit,
   Lock,
-  Message as MessageIcon,
-  User as UserIcon,
+  Message as MessageIcon
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import type { User } from 'firebase/auth';
@@ -132,11 +132,7 @@ onMounted(() => {
       <!-- Avatar Section -->
       <div class="profile__avatar-section">
         <div class="profile__avatar-wrapper">
-          <el-avatar :src="user?.photoURL || ''" :size="100" class="profile__avatar">
-            <el-icon :size="50">
-              <UserIcon />
-            </el-icon>
-          </el-avatar>
+          <el-avatar :src="user?.photoURL || fallbackAavatar" :size="100" class="profile__avatar" />
           <el-upload
             :show-file-list="false"
             :auto-upload="false"
