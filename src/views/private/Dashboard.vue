@@ -26,7 +26,7 @@ const handleCreateChat = async (targetUser: User) => {
       if (!chatId) return;
       chatStore.setRoomChatId(chatId);
       chatStore.setTargetUser(targetUser);
-      router.push({ name: 'Chat', params: { id: chatId } });
+      router.push({ name: 'ChatUser', params: { id: chatId } });
     });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';

@@ -98,7 +98,7 @@ const handleCreateGroup = async () => {
 
     ElMessage({ message: 'Group created successfully!', type: 'success', plain: true });
     drawer.value = false;
-    router.push({ name: 'ChatDetail', params: { chatId: groupId } });
+    router.push({ name: 'ChatGroup', params: { id: groupId } });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to create group';
     ElMessage({ message: msg, type: 'error', plain: true });

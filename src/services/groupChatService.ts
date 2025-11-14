@@ -31,3 +31,11 @@ export const addMemberToGroupChat = async (groupId: string, userIds: string[]) =
     members: [...snap.data().members, ...userIds],
   });
 };
+
+export const sendMessage = async (groupId: string, senderId: string, text: string) => {
+  await addDoc(collection(db, `groups/${groupId}/messages`), {
+    senderId,
+    text,
+    createdAt: serverTimestamp(),
+  });
+};

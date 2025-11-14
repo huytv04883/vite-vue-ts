@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import ChatInput from '@/components/ChatInput.vue';
 import MessageItem from '@/components/conversation/MessageItem.vue';
-import { getOlderMessages, getRecentMessages, listenMessages } from '@/services/chatService';
-import { useChatStore } from '@/store/useChatStore';
+import { getDataUser } from '@/helper/storage';
+import {
+  getOlderMessages,
+  getRecentMessages,
+  listenMessages,
+  sendMessage,
+} from '@/services/chatService';
+import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { ElMessage } from 'element-plus';
 import { nextTick, onMounted, ref } from 'vue';
@@ -14,9 +20,10 @@ const messageListRef = ref<HTMLDivElement | null>(null);
 const isFirstLoad = ref(true);
 const firstVisibleDoc = ref<unknown>(null);
 const loading = ref(false);
+const user = getDataUser();
 
 defineOptions({
-  name: 'ChatDetail',
+  name: 'ChatUserDetail',
 });
 
 const scrollToBottom = async () => {
@@ -51,6 +58,18 @@ const handleScroll = async () => {
     ElMessage({ message: msg, type: 'error', plain: true });
   } finally {
     loading.value = false;
+  }
+};
+
+const handleSendMessage = async (value: string) => {
+  try {
+    if (!value.trim()) return;
+    sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, value).then(() => {
+      chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
+    });
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
   }
 };
 
@@ -106,6 +125,9 @@ const handleTypingUpdate = (isTyping: boolean) => {
     <!-- <div v-else class="message-list empty">
       <p class="no-message">No messages yet. Start the conversation!</p>
     </div> -->
-    <ChatInput @update:set-other-typing="handleTypingUpdate" />
+    <ChatInput
+      @update:set-other-typing="handleTypingUpdate"
+      @send-message="(value) => handleSendMessage(value)"
+    />
   </div>
 </template>

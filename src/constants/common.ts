@@ -8,7 +8,8 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
-  CHAT: '/chat/:id',
+  CHAT_USER: '/chat-user/:id',
+  CHAT_GROUP: '/chat-group/:id',
   PROFILE: '/profile',
 };
 

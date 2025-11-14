@@ -36,9 +36,15 @@ const routes = [
     meta: { requiresAuth: true, layout: PATH.PRIVATE },
   },
   {
-    path: ROUTES.CHAT,
-    name: 'Chat',
-    component: () => import('@/views/private/ChatDetail.vue'),
+    path: ROUTES.CHAT_USER,
+    name: 'ChatUser',
+    component: () => import('@/views/private/ChatUserDetail.vue'),
+    meta: { requiresAuth: true, layout: PATH.PRIVATE },
+  },
+  {
+    path: ROUTES.CHAT_GROUP,
+    name: 'ChatGroup',
+    component: () => import('@/views/private/ChatGroupDetail.vue'),
     meta: { requiresAuth: true, layout: PATH.PRIVATE },
   },
   {
