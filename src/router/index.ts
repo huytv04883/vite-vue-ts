@@ -8,6 +8,7 @@ import Register from '@/views/guest/Register.vue';
 // Private (authenticated) pages can be added here
 import { PATH, ROUTES } from '@/constants/common';
 import Dashboard from '@/views/private/Dashboard.vue';
+import Profile from '@/views/private/Profile.vue';
 
 const routes = [
   {
@@ -38,6 +39,12 @@ const routes = [
     path: ROUTES.CHAT,
     name: 'Chat',
     component: () => import('@/views/private/ChatDetail.vue'),
+    meta: { requiresAuth: true, layout: PATH.PRIVATE },
+  },
+  {
+    path: ROUTES.PROFILE,
+    name: 'Profile',
+    component: Profile,
     meta: { requiresAuth: true, layout: PATH.PRIVATE },
   },
 ];

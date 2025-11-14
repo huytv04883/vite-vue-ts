@@ -9,6 +9,7 @@ export const ROUTES = {
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
   CHAT: '/chat/:id',
+  PROFILE: '/profile',
 };
 
 export const LIMIT_MESSAGES = 20;

@@ -45,6 +45,17 @@ const handleLogout = async () => {
     ElMessage({ message: msg, type: 'error', plain: true });
   }
 };
+
+const OPTIONS = [
+  {
+    label: 'Profile',
+    handler: () => {
+      router.push({ name: 'Profile' });
+      isShowDropdown.value = false;
+    },
+  },
+  { label: 'Logout', handler: handleLogout },
+];
 </script>
 <template>
   <header class="header">
@@ -62,8 +73,14 @@ const handleLogout = async () => {
         :key="dataUser?.uid"
       />
       <ul v-if="isShowDropdown">
-        <li>Profile</li>
-        <li @click="handleLogout">Logout</li>
+        <li
+          v-for="option in OPTIONS"
+          :key="option.label"
+          class="header__dropdown-item"
+          @click="option.handler"
+        >
+          {{ option.label }}
+        </li>
       </ul>
     </div>
   </header>
