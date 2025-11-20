@@ -8,4 +8,5 @@ export interface Message {
   createdAt: Timestamp;
   reactions?: string[];
   type: DocumentChangeType;
+  avatarUrl?: string;
 }

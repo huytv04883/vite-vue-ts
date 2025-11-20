@@ -4,7 +4,7 @@ import router from '@/router';
 import { getOrCreateChat } from '@/services/chatService';
 import { getGroupsChatByUserId } from '@/services/groupChatService';
 import { getRandomUsers } from '@/services/userService';
-import { useChatStore } from '@/store/useChatStore';
+import { CHAT_TYPE, useChatStore } from '@/store/useChatStore';
 import { Group } from '@/types/group.type';
 import { User } from '@/types/user.type';
 import { ElMessage } from 'element-plus';
@@ -14,8 +14,9 @@ defineOptions({
 });
 
 const chatStore = useChatStore();
-const users = ref<User[] | null>(null);
+const users = ref<User[]>([]);
 const groupChats = ref<Group[]>([]);
+const loading = ref(false);
 
 const handleCreateChat = async (targetUser: User) => {
   try {
@@ -23,6 +24,7 @@ const handleCreateChat = async (targetUser: User) => {
       if (!chatId) return;
       chatStore.setRoomChatId(chatId);
       chatStore.setTargetUser(targetUser);
+      chatStore.setChatType(CHAT_TYPE.USER);
       router.push({ name: 'ChatUser', params: { id: chatId } });
     });
   } catch (error) {
@@ -30,39 +32,51 @@ const handleCreateChat = async (targetUser: User) => {
     ElMessage({ message: msg, type: 'error', plain: true });
   }
 };
-const onDirectToGroupChat = (groupId: string) => {
-  router.push({ name: 'ChatGroup', params: { id: groupId } });
+
+const onDirectToGroupChat = (group: Group) => {
+  chatStore.setTargetGroup(group);
+  chatStore.setChatType(CHAT_TYPE.GROUP);
+  router.push({ name: 'ChatGroup', params: { id: group.id } });
+};
+
+const initData = async () => {
+  loading.value = true;
+  try {
+    users.value = await getRandomUsers();
+    groupChats.value = await getGroupsChatByUserId(auth.currentUser?.uid as string);
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'An error occurred';
+    ElMessage({ message: msg, type: 'error', plain: true });
+  } finally {
+    loading.value = false;
+  }
 };
 
 onMounted(async () => {
-  users.value = await getRandomUsers();
-  groupChats.value = await getGroupsChatByUserId(auth.currentUser?.uid as string);
+  await initData();
 });
 </script>
 <template>
-  <div class="dashboard">
-    <el-divider class="chat-heading" content-position="left">Friends</el-divider>
-    <div class="users">
-      <ul>
-        <li v-for="user in users" :key="user.uid" @click="handleCreateChat(user)">
-          <el-avatar :src="user.photoURL" :size="30" alt="User Avatar" />
-          <span>{{ user.displayName }}</span>
-        </li>
-      </ul>
-    </div>
-    <el-divider class="chat-heading" content-position="left">Groups</el-divider>
-    <div class="groups">
-      <ul>
-        <li
-          v-for="group in groupChats"
-          :key="group.id"
-          @click="() => onDirectToGroupChat(group.id)"
-        >
-          <el-avatar :size="30" alt="Group Chat Avatar" />
-          <span>{{ group.name }}</span>
-        </li>
-      </ul>
-    </div>
+  <div class="dashboard" v-loading="loading">
+    <template v-if="users?.length > 0 && groupChats.length > 0">
+      <el-divider class="chat-heading" content-position="left">Friends</el-divider>
+      <div class="users">
+        <ul>
+          <li v-for="user in users" :key="user.uid" @click="handleCreateChat(user)">
+            <el-avatar :src="user.photoURL" :size="30" alt="User Avatar" />
+            <span>{{ user.displayName }}</span>
+          </li>
+        </ul>
+      </div>
+      <el-divider class="chat-heading" content-position="left">Groups</el-divider>
+      <div class="groups">
+        <ul>
+          <li v-for="group in groupChats" :key="group.id" @click="() => onDirectToGroupChat(group)">
+            <el-avatar :size="30" alt="Group Chat Avatar" />
+            <span>{{ group.name }}</span>
+          </li>
+        </ul>
+      </div>
+    </template>
   </div>
 </template>
-

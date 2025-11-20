@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import '@/assets/styles/components/conversation-message.scss';
 import { emojis } from '@/constants/emoji';
 import { getDataUser } from '@/helper/storage';
@@ -106,7 +107,7 @@ const isOwnMessage = computed(() => {
 });
 
 const avatarUrl = computed(() => {
-  return isOwnMessage.value ? user?.user?.photoURL : chatStore.targetUser?.photoURL;
+  return isOwnMessage.value ? user?.user?.photoURL : (props.message?.avatarUrl ?? fallbackAavatar);
 });
 const nameUser = computed(() => {
   return isOwnMessage.value ? user?.user?.displayName : chatStore.targetUser?.displayName;

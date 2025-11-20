@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ChatInput from '@/components/ChatInput.vue';
 import MessageItem from '@/components/conversation/MessageItem.vue';
+import { scrollToBottom } from '@/helper/common';
 import { getDataUser } from '@/helper/storage';
 import {
   getOlderMessages,
@@ -17,7 +18,6 @@ const msgs = ref<Message[]>([]);
 const isOtherTyping = ref(false);
 const chatStore = useChatStore();
 const messageListRef = ref<HTMLDivElement | null>(null);
-const isFirstLoad = ref(true);
 const firstVisibleDoc = ref<unknown>(null);
 const loading = ref(false);
 const user = getDataUser();
@@ -25,17 +25,6 @@ const user = getDataUser();
 defineOptions({
   name: 'ChatUserDetail',
 });
-
-const scrollToBottom = async () => {
-  await nextTick();
-  const el = messageListRef.value;
-  if (el) {
-    el.scrollTo({
-      top: el.scrollHeight,
-      behavior: 'smooth',
-    });
-  }
-};
 
 const handleScroll = async () => {
   loading.value = true;
@@ -64,7 +53,7 @@ const handleScroll = async () => {
 const handleSendMessage = async (value: string) => {
   try {
     if (!value.trim()) return;
-    sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, value).then(() => {
+    await sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, value).then(() => {
       chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
     });
   } catch (error) {
@@ -80,9 +69,6 @@ const fetchInitialMessages = async () => {
     msgs.value = [...recent];
 
     firstVisibleDoc.value = firstDoc;
-    if (isFirstLoad.value) {
-      isFirstLoad.value = false;
-    }
 
     listenMessages(chatStore.roomChatId as string, async (messages) => {
       const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
@@ -90,7 +76,7 @@ const fetchInitialMessages = async () => {
         msgs.value[existingMsgIndex] = messages[0];
       } else {
         msgs.value.push(messages[0]);
-        scrollToBottom();
+        scrollToBottom(messageListRef);
       }
     });
   } catch (error) {
@@ -113,18 +99,18 @@ const handleTypingUpdate = (isTyping: boolean) => {
   <div class="conversation-detail">
     <div
       ref="messageListRef"
-      class="message-list"
+      :class="'message-list' + (msgs.length === 0 ? ' empty' : '')"
       @scroll.passive="handleScroll"
       v-loading="loading"
     >
-      <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
+      <template v-if="msgs.length > 0">
+        <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
+      </template>
+      <p v-else class="no-message">No messages yet. Start the conversation!</p>
       <p v-if="isOtherTyping" class="typing">
         {{ chatStore.targetUser?.displayName }} is typing...
       </p>
     </div>
-    <!-- <div v-else class="message-list empty">
-      <p class="no-message">No messages yet. Start the conversation!</p>
-    </div> -->
     <ChatInput
       @update:set-other-typing="handleTypingUpdate"
       @send-message="(value) => handleSendMessage(value)"
