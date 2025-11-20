@@ -196,3 +196,18 @@
     transform: translateX(0);
   }
 }
+
+// Text Truncation Mixins
+@mixin text-truncate-multiline($lines: 2) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  -webkit-box-orient: vertical;
+}
+
+@mixin text-truncate-single {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -94,7 +94,11 @@ const handleCreateGroup = async () => {
   try {
     isLoading.value = true;
     const memberIds = selectedUsers.value.map((u) => u.uid);
-    const groupId = await createGroupChat(groupName.value, memberIds, currentUser.uid);
+    const groupId = await createGroupChat(
+      groupName.value,
+      [...memberIds, currentUser.uid],
+      currentUser.uid,
+    );
 
     ElMessage({ message: 'Group created successfully!', type: 'success', plain: true });
     drawer.value = false;

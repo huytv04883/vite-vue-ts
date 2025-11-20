@@ -2,9 +2,10 @@
 import { auth } from '@/firebase/config';
 import router from '@/router';
 import { getOrCreateChat } from '@/services/chatService';
-import { getDataGroupChat } from '@/services/groupChatService';
+import { getGroupsChatByUserId } from '@/services/groupChatService';
 import { getRandomUsers } from '@/services/userService';
 import { useChatStore } from '@/store/useChatStore';
+import { Group } from '@/types/group.type';
 import { User } from '@/types/user.type';
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';
@@ -14,11 +15,7 @@ defineOptions({
 
 const chatStore = useChatStore();
 const users = ref<User[] | null>(null);
-const groupChats = ref<unknown[]>([]);
-
-onMounted(async () => {
-  users.value = await getRandomUsers();
-});
+const groupChats = ref<Group[]>([]);
 
 const handleCreateChat = async (targetUser: User) => {
   try {
@@ -33,17 +30,19 @@ const handleCreateChat = async (targetUser: User) => {
     ElMessage({ message: msg, type: 'error', plain: true });
   }
 };
+const onDirectToGroupChat = (groupId: string) => {
+  router.push({ name: 'ChatGroup', params: { id: groupId } });
+};
 
 onMounted(async () => {
-  await getDataGroupChat('toeQGbEa4aqsVV1s2wAY').then((data) => {
-    console.log('data', data);
-    groupChats.value.push(data);
-  });
+  users.value = await getRandomUsers();
+  groupChats.value = await getGroupsChatByUserId(auth.currentUser?.uid as string);
 });
 </script>
 <template>
   <div class="dashboard">
-    <div class="user-list">
+    <el-divider class="chat-heading" content-position="left">Friends</el-divider>
+    <div class="users">
       <ul>
         <li v-for="user in users" :key="user.uid" @click="handleCreateChat(user)">
           <el-avatar :src="user.photoURL" :size="30" alt="User Avatar" />
@@ -51,5 +50,19 @@ onMounted(async () => {
         </li>
       </ul>
     </div>
+    <el-divider class="chat-heading" content-position="left">Groups</el-divider>
+    <div class="groups">
+      <ul>
+        <li
+          v-for="group in groupChats"
+          :key="group.id"
+          @click="() => onDirectToGroupChat(group.id)"
+        >
+          <el-avatar :size="30" alt="Group Chat Avatar" />
+          <span>{{ group.name }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
+

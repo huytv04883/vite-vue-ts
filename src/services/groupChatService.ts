@@ -1,5 +1,14 @@
 import { db } from '@/firebase/config';
-import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { Group } from '@/types/group.type';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 
 export const createGroupChat = async (name: string, members: string[], createdBy: string) => {
   const chatDoc = await addDoc(collection(db, 'groups'), {
@@ -38,4 +47,16 @@ export const sendMessage = async (groupId: string, senderId: string, text: strin
     text,
     createdAt: serverTimestamp(),
   });
+};
+
+export const getGroupsChatByUserId = async (userId: string) => {
+  const groupsQuery = collection(db, 'groups');
+  const groups: Group[] = [];
+  const querySnapshot = await getDocs(groupsQuery);
+  querySnapshot.forEach((doc) => {
+    if (userId && doc.data().members.includes(userId)) {
+      groups.push({ id: doc.id, ...doc.data() } as Group);
+    }
+  });
+  return groups;
 };
