@@ -136,3 +136,4 @@ export const getOlderMessages = async (
   const newLastDoc = snapshot.docs[snapshot.docs.length - 1];
   return { messages, lastDoc: newLastDoc };
 };
+

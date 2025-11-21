@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
+import CloudinaryUpload from '@/components/CloudinaryUpload.vue';
 import { updateUserProfile } from '@/services/userService';
-import {
-  Camera,
-  Edit,
-  Lock,
-  Message as MessageIcon
-} from '@element-plus/icons-vue';
+import { Edit, Lock, Message as MessageIcon } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import type { User } from 'firebase/auth';
 import { getAuth, updatePassword, updateProfile } from 'firebase/auth';
@@ -24,7 +20,6 @@ const user = ref<User | null>(null);
 const isEditing = ref(false);
 const isChangingPassword = ref(false);
 const loading = ref(false);
-const uploadingAvatar = ref(false);
 
 // Profile form
 const profileForm = ref({
@@ -129,24 +124,10 @@ onMounted(() => {
     </div>
 
     <div class="profile__content">
-      <!-- Avatar Section -->
       <div class="profile__avatar-section">
         <div class="profile__avatar-wrapper">
           <el-avatar :src="user?.photoURL || fallbackAavatar" :size="100" class="profile__avatar" />
-          <el-upload
-            :show-file-list="false"
-            :auto-upload="false"
-            accept="image/*"
-            class="profile__avatar-upload"
-          >
-            <el-button
-              :icon="Camera"
-              circle
-              class="profile__avatar-upload-btn"
-              :loading="uploadingAvatar"
-              size="small"
-            />
-          </el-upload>
+          <CloudinaryUpload />
         </div>
         <h3 class="profile__name">{{ user?.displayName || 'User' }}</h3>
         <p class="profile__email">{{ user?.email }}</p>
