@@ -18,3 +18,11 @@ export const getDataUser = (): UserCredential | null => {
 export const clearDataUser = () => {
   localStorage.removeItem(STORAGE_KEY.USER);
 };
+
+export const updateDataUser = (updatedUser: Partial<UserCredential>) => {
+  const currentUser = getDataUser();
+  if (currentUser) {
+    const newUser = { ...currentUser, ...updatedUser };
+    localStorage.setItem(STORAGE_KEY.USER, JSON.stringify(newUser));
+  }
+};

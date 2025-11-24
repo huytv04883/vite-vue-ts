@@ -12,38 +12,39 @@
     </div>
     <el-button
       class="cloudinary-upload__button cancel"
-      :class="{ 'is-uploading': isUploading }"
+      :class="{ 'is-uploading': props.isUploading }"
       @click="handleCancel"
-      :disabled="!selectedFile || isUploading"
+      :disabled="!selectedFile || props.isUploading"
       type="default"
       >Cancel</el-button
     >
     <el-button
       class="cloudinary-upload__button submit"
-      :class="{ 'is-uploading': isUploading }"
+      :class="{ 'is-uploading': props.isUploading }"
       @click="uploadImage"
-      :disabled="!selectedFile || isUploading"
+      :disabled="!selectedFile || props.isUploading"
       type="primary"
     >
-      {{ isUploading ? 'Uploading...' : 'Upload' }}
+      {{ props.isUploading ? 'Uploading...' : 'Upload' }}
     </el-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Camera } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 defineOptions({
   name: 'CloudinaryUpload',
 });
+const props = defineProps<{
+  isUploading: boolean;
+}>();
 
-const emit = defineEmits(['onUploadImage']);
+const emit = defineEmits(['onUploadImage', 'onSelectAvatar', 'onCancel']);
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
-const isUploading = ref(false);
 
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -51,24 +52,27 @@ const handleFileChange = (e: Event) => {
 
   if (file) {
     selectedFile.value = file;
+    emit('onSelectAvatar', file);
   }
 };
 
 const handleCancel = () => {
+  emit('onCancel');
   selectedFile.value = null;
 };
 
 const uploadImage = async () => {
   if (!selectedFile.value) return;
-  isUploading.value = true;
-
-  try {
-    emit('onUploadImage');
-  } catch (error) {
-    const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
-  } finally {
-    isUploading.value = false;
-  }
+  emit('onUploadImage', selectedFile.value);
+  selectedFile.value = null;
 };
+
+watch(
+  () => selectedFile.value,
+  (newFile) => {
+    if (!newFile && fileInput.value) {
+      fileInput.value.value = '';
+    }
+  },
+);
 </script>

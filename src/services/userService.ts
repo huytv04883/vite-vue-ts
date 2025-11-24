@@ -55,3 +55,10 @@ export const getRandomUsers = async (limitCount = 10) => {
   const shuffled = allUsers.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, limitCount);
 };
+
+export const getDataUserById = async (uid: string) => {
+  const userRef = doc(db, 'users', uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return null;
+  return snap.data() as User;
+};
