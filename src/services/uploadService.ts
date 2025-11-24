@@ -9,7 +9,7 @@ export const handleUploadImageToCloudinary = async (file: File) => {
     method: 'POST',
     body: formData,
   });
-
+  alert(JSON.stringify(response));
   if (!response.ok) {
     throw new Error('Upload failed');
   }

@@ -70,6 +70,7 @@ const handleSendMessage = async (value: string | File, type: { type: string }) =
   try {
     if (type.type === 'image' && typeof value !== 'string') {
       isSendingMsg.value = true;
+      scrollToBottom(messageListRef);
       await handleUploadImageToCloudinary(value as File).then(async (url) => {
         if (!url) return;
         onSendMessage(url, 'image');

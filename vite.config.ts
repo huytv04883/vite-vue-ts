@@ -21,6 +21,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['fd80822cbfab.ngrok-free.app', 'vite-vue-ts-mu.vercel.app/'],
+    allowedHosts: ['fd80822cbfab.ngrok-free.app', 'shasimi.vercel.app/'],
   },
 });
