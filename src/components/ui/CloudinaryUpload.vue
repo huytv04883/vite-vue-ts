@@ -6,6 +6,7 @@
         class="cloudinary-upload__input"
         type="file"
         accept="image/*"
+        capture="environment"
         @change="handleFileChange"
         ref="fileInput"
       />

@@ -17,8 +17,20 @@
       <template #reference>
         <div class="chat-message__content">
           <div v-if="!isOwnMessage" class="chat-message__sender">{{ nameUser }}</div>
-          <div class="chat-message__bubble">
-            {{ message.text }}
+          <div
+            :class="
+              message.typeMessage === 'image'
+                ? 'chat-message__bubble chat-message__bubble--image'
+                : 'chat-message__bubble'
+            "
+          >
+            <ImageSending
+              v-if="message.typeMessage === 'image'"
+              :image-url="message.text"
+              :is-sending="false"
+              :percent="0"
+            />
+            <span v-else>{{ message.text }}</span>
           </div>
           <div class="chat-message__time">{{ formatFirestoreDate(message.createdAt) }}</div>
           <div v-if="!!emojisAdded.length">
@@ -50,6 +62,7 @@ import { formatFirestoreDate } from '@/utils/date';
 import { ElMessage, ElPopover } from 'element-plus';
 import { computed, ref, watch } from 'vue';
 import CAvatar from '../../ui/Avatar.vue';
+import ImageSending from '@/components/ui/ImageSending.vue';
 
 const chatStore = useChatStore();
 const user = getDataUser();

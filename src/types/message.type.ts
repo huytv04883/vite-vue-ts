@@ -9,4 +9,5 @@ export interface Message {
   reactions?: string[];
   type: DocumentChangeType;
   avatarUrl?: string;
+  typeMessage?: 'text' | 'image';
 }

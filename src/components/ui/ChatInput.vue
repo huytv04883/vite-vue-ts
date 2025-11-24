@@ -1,33 +1,54 @@
 <template>
-  <el-space :size="12" class="send-box">
-    <div class="send-box__left">
-      <el-button :icon="Burger" circle plain title="Attach file" />
-    </div>
-    <div class="send-box__right">
-      <input
-        v-model="message"
-        :placeholder="placeholder"
-        clearable
-        @keydown.enter="handleSend"
-        @keydown="handleTyping"
-      />
+  <div class="send-box">
+    <div v-if="selectedImage" class="send-box__preview">
+      <ImageSending :image-url="previewUrl" :is-sending="false" />
       <el-button
-        :icon="Send"
+        class="send-box__preview-close"
+        :icon="Close"
         circle
-        @click="handleSend"
-        :disabled="!message.trim()"
-        type="primary"
-        title="Send message"
+        size="small"
+        @click="removeImage"
       />
     </div>
-  </el-space>
+    <div class="send-box__content">
+      <div class="send-box__left">
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept="image/*"
+          style="display: none"
+          @change="handleFileSelect"
+        />
+        <el-button :icon="Burger" circle plain title="Attach file" @click="triggerFileInput" />
+      </div>
+      <div class="send-box__right">
+        <input
+          v-model="message"
+          :placeholder="placeholder"
+          :disabled="selectedImage !== null"
+          clearable
+          @keydown.enter="handleSend"
+          @keydown="handleTyping"
+        />
+        <el-button
+          :icon="Send"
+          circle
+          @click="handleSend"
+          :disabled="!message.trim() && selectedImage === null"
+          type="primary"
+          title="Send message"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import ImageSending from '@/components/ui/ImageSending.vue';
 import { getDataUser } from '@/helper/storage';
 import { listenTypingStatus, setTypingStatus } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
-import { Burger, Right as Send } from '@element-plus/icons-vue';
+import { Burger, Close, Right as Send } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
 const chatStore = useChatStore();
@@ -37,11 +58,41 @@ let typingTimeout: number;
 
 const message = ref<string>('');
 const placeholder = ref<string>('Write your message...');
+const fileInputRef = ref<HTMLInputElement | null>(null);
+const selectedImage = ref<File | null>(null);
+const previewUrl = ref<string>('');
+
 defineOptions({
   name: 'ChatInput',
 });
 
-const emit = defineEmits(['update:setOtherTyping', 'sendMessage']);
+const emit = defineEmits(['update:setOtherTyping', 'sendMessage', 'sendImage']);
+
+const triggerFileInput = () => {
+  fileInputRef.value?.click();
+};
+
+const handleFileSelect = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const file = target.files?.[0];
+
+  if (file) {
+    selectedImage.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+    emit('sendImage', file);
+  }
+};
+
+const removeImage = () => {
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value);
+  }
+  selectedImage.value = null;
+  previewUrl.value = '';
+  if (fileInputRef.value) {
+    fileInputRef.value.value = '';
+  }
+};
 
 const handleTyping = () => {
   clearTimeout(typingTimeout);
@@ -65,8 +116,13 @@ onUnmounted(() => unsubscribe && unsubscribe());
 
 const handleSend = async (): Promise<void> => {
   try {
-    if (!message.value.trim()) return;
-    emit('sendMessage', message.value.trim());
+    if (!message.value.trim() && !selectedImage.value) return;
+    emit('sendMessage', selectedImage.value ? selectedImage.value : message.value.trim(), {
+      type: selectedImage.value ? 'image' : 'text',
+    });
+    if (selectedImage.value) {
+      removeImage();
+    }
     message.value = '';
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';

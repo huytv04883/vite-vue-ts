@@ -8,7 +8,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
-  where
+  where,
 } from 'firebase/firestore';
 
 export const getOrCreateChat = async (userId1: string, userId2: string) => {
@@ -34,10 +34,16 @@ export const getOrCreateChat = async (userId1: string, userId2: string) => {
   return chatDoc.id;
 };
 
-export const sendMessage = async (chatId: string, senderId: string, text: string) => {
+export const sendMessage = async (
+  chatId: string,
+  senderId: string,
+  text: string,
+  typeMessage: 'text' | 'image',
+) => {
   await addDoc(collection(db, `chats/${chatId}/messages`), {
     senderId,
     text,
+    typeMessage,
     createdAt: serverTimestamp(),
   });
 };

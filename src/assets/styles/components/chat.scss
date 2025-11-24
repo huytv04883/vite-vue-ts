@@ -105,11 +105,41 @@
   border-top: 1px solid $gray-200;
   background: $white;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: $spacing-3;
   position: relative;
   /* Ensure it stays visible on iOS */
   z-index: 10;
+
+  &__preview {
+    position: relative;
+    display: inline-block;
+    max-width: fit-content;
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    &-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6) !important;
+      border: none !important;
+      color: $white !important;
+      z-index: 2;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.8) !important;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
 
   &__left {
     flex-shrink: 0;

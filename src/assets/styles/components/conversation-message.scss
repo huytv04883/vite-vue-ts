@@ -26,36 +26,6 @@
   }
 }
 
-.send-box {
-  padding: 0 $spacing-4;
-  display: grid;
-  grid-template-columns: 32px 1fr;
-  justify-content: space-between;
-  background: $white;
-  min-height: 60px;
-
-  &__right {
-    display: flex;
-    align-items: center;
-    gap: $spacing-2;
-
-    input {
-      @include input-base;
-      width: 100%;
-      font-size: $font-size-sm;
-      padding: $spacing-2 $spacing-3;
-      border-radius: $border-radius-md;
-      border: 1px solid $gray-300;
-
-      &:focus {
-        border-color: $primary-color;
-        box-shadow: 0 0 0 1px rgba($primary-color, 0.3);
-        outline: none;
-      }
-    }
-  }
-}
-
 .message {
   &-list {
     overflow-y: auto;
@@ -139,6 +109,12 @@
     .chat-message__bubble {
       background-color: $primary-color;
       color: $white;
+
+      &--image {
+        padding: 0;
+        background-color: transparent;
+        box-shadow: unset;
+      }
     }
 
     .chat-message__sender {

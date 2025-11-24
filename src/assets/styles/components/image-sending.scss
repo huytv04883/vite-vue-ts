@@ -1,0 +1,13 @@
+@use '../_variables' as *;
+
+.image-sending {
+  &__progress {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: $spacing-3;
+  }
+}
