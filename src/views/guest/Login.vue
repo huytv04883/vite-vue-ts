@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { auth } from '@/firebase/config';
 import { setDataUser } from '@/helper/storage';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/composables/useAuth';
 import router from '@/router';
 import { saveUserIfNotExists } from '@/services/userService';
 import { LoginForm } from '@/types/login.type';

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ChatHeader from '@/components/conversation/ChatHeader.vue';
-import CreateGroupPopover from '@/components/CreateGroupPopover.vue';
+import ChatHeader from '@/components/modules/conversation/ChatHeader.vue';
+import CreateGroupPopover from '@/components/modules/popovers/CreateGroupPopover.vue';
 
 defineOptions({
   name: 'ChatLayout',

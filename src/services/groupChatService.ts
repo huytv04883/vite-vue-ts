@@ -1,20 +1,13 @@
-import { LIMIT_MESSAGES } from '@/constants/common';
 import { db } from '@/firebase/config';
 import { Group } from '@/types/group.type';
-import { Message } from '@/types/message.type';
 import {
   addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
   serverTimestamp,
-  startAfter,
-  updateDoc,
+  updateDoc
 } from 'firebase/firestore';
 
 export const createGroupChat = async (name: string, members: string[], createdBy: string) => {
@@ -73,67 +66,3 @@ export const getGroupsChatByUserId = async (userId: string) => {
   });
   return groups;
 };
-
-export const getRecentMessages = async (chatId: string, pageSize = LIMIT_MESSAGES) => {
-  const q = query(
-    collection(db, 'groups', chatId, 'messages'),
-    orderBy('createdAt', 'desc'),
-    limit(pageSize),
-  );
-
-  const snapshot = await getDocs(q);
-  const messages = snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
-    .reverse() as Message[];
-
-  const firstDoc = snapshot.docs[snapshot.docs.length - 1];
-  const lastDoc = snapshot.docs[0];
-  return { messages, firstDoc, lastDoc };
-};
-
-export const listenMessages = (chatId: string, callback: (msgs: Message[]) => void) => {
-  const q = query(collection(db, 'groups', chatId, 'messages'), orderBy('createdAt', 'asc'));
-
-  return onSnapshot(q, (snapshot) => {
-    const messagesResult = snapshot
-      .docChanges()
-      .filter((c) => c.type === 'added' || c.type === 'modified')
-      .map((msg) => ({
-        id: msg.doc.id,
-        type: msg.type,
-        ...msg.doc.data(),
-      }));
-
-    if (messagesResult.length > 0) {
-      callback([...messagesResult] as Message[]);
-    }
-  });
-};
-
-export const getOlderMessages = async (
-  chatId: string,
-  lastDoc: unknown,
-  pageSize = LIMIT_MESSAGES,
-) => {
-  const q = query(
-    collection(db, 'groups', chatId, 'messages'),
-    orderBy('createdAt', 'desc'),
-    startAfter(lastDoc),
-    limit(pageSize),
-  );
-
-  const snapshot = await getDocs(q);
-  const messages = snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
-    .reverse(); // Reverse to match ascending order
-
-  const newLastDoc = snapshot.docs[snapshot.docs.length - 1];
-  return { messages, lastDoc: newLastDoc };
-};
-

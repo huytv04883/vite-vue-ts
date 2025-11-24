@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
-import CloudinaryUpload from '@/components/CloudinaryUpload.vue';
+import CloudinaryUpload from '@/components/ui/CloudinaryUpload.vue';
 import { updateUserProfile } from '@/services/userService';
 import { Edit, Lock, Message as MessageIcon } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';

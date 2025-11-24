@@ -49,7 +49,7 @@ import { Message } from '@/types/message.type';
 import { formatFirestoreDate } from '@/utils/date';
 import { ElMessage, ElPopover } from 'element-plus';
 import { computed, ref, watch } from 'vue';
-import CAvatar from '../Avatar.vue';
+import CAvatar from '../../ui/Avatar.vue';
 
 const chatStore = useChatStore();
 const user = getDataUser();

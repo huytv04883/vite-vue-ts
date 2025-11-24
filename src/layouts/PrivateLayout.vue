@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppHeader from '@/components/common/Header.vue';
-import CreateGroupPopover from '@/components/CreateGroupPopover.vue';
+import CreateGroupPopover from '@/components/modules/popovers/CreateGroupPopover.vue';
 
 defineOptions({
   name: 'PrivateLayout',

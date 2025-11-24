@@ -3,7 +3,7 @@ import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import logoUrl from '@/assets/imgs/ss.png';
 import { auth } from '@/firebase/config';
 import { clearDataUser } from '@/helper/storage';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/composables/useAuth';
 import router from '@/router';
 import { useAppStore } from '@/store/appStore';
 import { Edit } from '@element-plus/icons-vue';

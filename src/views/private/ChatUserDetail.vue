@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import ChatInput from '@/components/ChatInput.vue';
-import MessageItem from '@/components/conversation/MessageItem.vue';
+import MessageItem from '@/components/modules/conversation/MessageItem.vue';
+import ChatInput from '@/components/ui/ChatInput.vue';
 import { scrollToBottom } from '@/helper/common';
 import { getDataUser } from '@/helper/storage';
 import {
+  CHAT_TYPE,
   getOlderMessages,
   getRecentMessages,
   listenMessages,
-  sendMessage,
-} from '@/services/chatService';
+} from '@/services/baseService';
+import { sendMessage } from '@/services/chatService';
 import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { ElMessage } from 'element-plus';
@@ -36,6 +37,7 @@ const handleScroll = async () => {
       const { messages: olderMessages, lastDoc } = await getOlderMessages(
         chatStore.roomChatId as string,
         firstVisibleDoc.value,
+        CHAT_TYPE.chats,
       );
       msgs.value.unshift(...(olderMessages as Message[]));
       firstVisibleDoc.value = lastDoc; // Update to the new oldest doc
@@ -65,20 +67,27 @@ const handleSendMessage = async (value: string) => {
 const fetchInitialMessages = async () => {
   loading.value = true;
   try {
-    const { messages: recent, firstDoc } = await getRecentMessages(chatStore.roomChatId as string);
+    const { messages: recent, firstDoc } = await getRecentMessages(
+      chatStore.roomChatId as string,
+      CHAT_TYPE.chats,
+    );
     msgs.value = [...recent];
 
     firstVisibleDoc.value = firstDoc;
 
-    listenMessages(chatStore.roomChatId as string, async (messages) => {
-      const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
-      if (existingMsgIndex !== -1) {
-        msgs.value[existingMsgIndex] = messages[0];
-      } else {
-        msgs.value.push(messages[0]);
-        scrollToBottom(messageListRef);
-      }
-    });
+    listenMessages(
+      chatStore.roomChatId as string,
+      async (messages) => {
+        const existingMsgIndex = msgs.value.findIndex((msg) => msg.id === messages[0].id);
+        if (existingMsgIndex !== -1) {
+          msgs.value[existingMsgIndex] = messages[0];
+        } else {
+          msgs.value.push(messages[0]);
+          scrollToBottom(messageListRef);
+        }
+      },
+      CHAT_TYPE.chats,
+    );
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
     ElMessage({ message: msg, type: 'error', plain: true });

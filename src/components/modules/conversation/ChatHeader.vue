@@ -23,12 +23,12 @@
 
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
+import CAvatar from '@/components/ui/Avatar.vue';
 import router from '@/router';
 import { CHAT_TYPE, useChatStore } from '@/store/useChatStore';
 import { ArrowLeftBold, More, Phone, VideoCamera } from '@element-plus/icons-vue';
 import { ElButton } from 'element-plus';
 import { computed } from 'vue';
-import CAvatar from '../Avatar.vue';
 
 defineOptions({
   name: 'ChatHeader',

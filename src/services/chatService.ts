@@ -1,19 +1,14 @@
-import { LIMIT_MESSAGES } from '@/constants/common';
 import { db } from '@/firebase/config';
-import { Message } from '@/types/message.type';
 import {
   addDoc,
   collection,
   doc,
   getDocs,
-  limit,
   onSnapshot,
-  orderBy,
   query,
   serverTimestamp,
   setDoc,
-  startAfter,
-  where,
+  where
 } from 'firebase/firestore';
 
 export const getOrCreateChat = async (userId1: string, userId2: string) => {
@@ -47,25 +42,6 @@ export const sendMessage = async (chatId: string, senderId: string, text: string
   });
 };
 
-export const listenMessages = (chatId: string, callback: (msgs: Message[]) => void) => {
-  const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
-
-  return onSnapshot(q, (snapshot) => {
-    const messagesResult = snapshot
-      .docChanges()
-      .filter((c) => c.type === 'added' || c.type === 'modified')
-      .map((msg) => ({
-        id: msg.doc.id,
-        type: msg.type,
-        ...msg.doc.data(),
-      }));
-
-    if (messagesResult.length > 0) {
-      callback([...messagesResult] as Message[]);
-    }
-  });
-};
-
 export const setTypingStatus = async (chatId: string, userId: string, isTyping: boolean) => {
   const typingRef = doc(db, 'chats', chatId);
   await setDoc(typingRef, { typing: { [userId]: isTyping } }, { merge: true });
@@ -84,48 +60,4 @@ export const listenTypingStatus = (
       callback(data.typing[targetUserId]);
     }
   });
-};
-
-export const getRecentMessages = async (chatId: string, pageSize = LIMIT_MESSAGES) => {
-  const q = query(
-    collection(db, 'chats', chatId, 'messages'),
-    orderBy('createdAt', 'desc'),
-    limit(pageSize),
-  );
-
-  const snapshot = await getDocs(q);
-  const messages = snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
-    .reverse() as Message[]; // Reverse to get oldest-to-newest order
-
-  const firstDoc = snapshot.docs[snapshot.docs.length - 1]; // The oldest doc (for backward pagination)
-  const lastDoc = snapshot.docs[0]; // The newest doc (for forward/real-time listening)
-  return { messages, firstDoc, lastDoc };
-};
-
-export const getOlderMessages = async (
-  chatId: string,
-  lastDoc: unknown,
-  pageSize = LIMIT_MESSAGES,
-) => {
-  const q = query(
-    collection(db, 'chats', chatId, 'messages'),
-    orderBy('createdAt', 'desc'),
-    startAfter(lastDoc),
-    limit(pageSize),
-  );
-
-  const snapshot = await getDocs(q);
-  const messages = snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
-    .reverse(); // Reverse to match ascending order
-
-  const newLastDoc = snapshot.docs[snapshot.docs.length - 1];
-  return { messages, lastDoc: newLastDoc };
 };
