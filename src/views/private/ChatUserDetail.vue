@@ -19,7 +19,7 @@ import { nextTick, onMounted, ref } from 'vue';
 
 const msgs = ref<Message[]>([]);
 const isOtherTyping = ref(false);
-const isSendingImage = ref(false);
+const isSendingMsg = ref(false);
 const chatStore = useChatStore();
 const messageListRef = ref<HTMLDivElement | null>(null);
 const firstVisibleDoc = ref<unknown>(null);
@@ -69,12 +69,11 @@ const onSendMessage = async (value: string, typeMessage: 'text' | 'image') => {
 const handleSendMessage = async (value: string | File, type: { type: string }) => {
   try {
     if (type.type === 'image' && typeof value !== 'string') {
-      isSendingImage.value = true;
+      isSendingMsg.value = true;
       await handleUploadImageToCloudinary(value as File).then(async (url) => {
         if (!url) return;
         onSendMessage(url, 'image');
       });
-      isSendingImage.value = false;
     } else {
       if (typeof value === 'string' && !value.trim()) return;
       await sendMessage(
@@ -89,6 +88,8 @@ const handleSendMessage = async (value: string | File, type: { type: string }) =
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to send message';
     ElMessage({ message: msg, type: 'error', plain: true });
+  } finally {
+    isSendingMsg.value = false;
   }
 };
 
@@ -142,8 +143,8 @@ const handleTypingUpdate = (isTyping: boolean) => {
     >
       <template v-if="msgs.length > 0">
         <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
-        <div class="chat-message chat-message--own" v-if="isSendingImage">
-          <ImageSending :imageUrl="''" :isSending="isSendingImage" />
+        <div class="chat-message chat-message--own" v-if="isSendingMsg">
+          <ImageSending :imageUrl="''" :isSending="isSendingMsg" />
         </div>
       </template>
       <p v-else class="no-message">No messages yet. Start the conversation!</p>
@@ -154,6 +155,7 @@ const handleTypingUpdate = (isTyping: boolean) => {
     <ChatInput
       @update:set-other-typing="handleTypingUpdate"
       @send-message="(value, type) => handleSendMessage(value, type)"
+      :sending="isSendingMsg"
     />
   </div>
 </template>

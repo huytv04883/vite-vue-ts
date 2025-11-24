@@ -1,5 +1,5 @@
 <template>
-  <div class="send-box">
+  <div class="send-box" :class="{ 'send-box--sending': props.sending }">
     <div v-if="selectedImage" class="send-box__preview">
       <ImageSending :image-url="previewUrl" :is-sending="false" />
       <el-button
@@ -67,6 +67,9 @@ defineOptions({
 });
 
 const emit = defineEmits(['update:setOtherTyping', 'sendMessage', 'sendImage']);
+const props = defineProps<{
+  sending: boolean;
+}>();
 
 const triggerFileInput = () => {
   fileInputRef.value?.click();

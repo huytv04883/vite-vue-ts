@@ -111,6 +111,11 @@
   /* Ensure it stays visible on iOS */
   z-index: 10;
 
+  &--sending {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   &__preview {
     position: relative;
     display: inline-block;
