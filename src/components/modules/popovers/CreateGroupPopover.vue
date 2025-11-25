@@ -3,8 +3,8 @@ import { createGroupChat } from '@/services/groupChatService';
 import { getRandomUsers } from '@/services/userService';
 import { useAppStore } from '@/store/appStore';
 import { User } from '@/types/user.type';
+import { MESSAGES } from '@/utils/message';
 import { Search } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
 import { getAuth } from 'firebase/auth';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -47,7 +47,7 @@ const loadUsers = async () => {
     allUsers.value = await getRandomUsers(100);
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to load users';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     isLoading.value = false;
   }
@@ -77,17 +77,17 @@ const toggleUserSelection = (user: User) => {
 
 const handleCreateGroup = async () => {
   if (!groupName.value.trim()) {
-    ElMessage({ message: 'Please enter a group name', type: 'warning', plain: true });
+    MESSAGES.warning('Please enter a group name', 3);
     return;
   }
   if (selectedUsers.value.length === 0) {
-    ElMessage({ message: 'Please select at least one member', type: 'warning', plain: true });
+    MESSAGES.warning('Please select at least one member', 3);
     return;
   }
 
   const currentUser = auth.currentUser;
   if (!currentUser) {
-    ElMessage({ message: 'You must be logged in to create a group', type: 'error', plain: true });
+    MESSAGES.error('You must be logged in to create a group', 3);
     return;
   }
 
@@ -100,12 +100,12 @@ const handleCreateGroup = async () => {
       currentUser.uid,
     );
 
-    ElMessage({ message: 'Group created successfully!', type: 'success', plain: true });
+    MESSAGES.success('Group created successfully!', 3);
     drawer.value = false;
     router.push({ name: 'ChatGroup', params: { id: groupId } });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to create group';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     isLoading.value = false;
   }

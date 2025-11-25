@@ -12,7 +12,7 @@ import {
 import { sendMessage } from '@/services/groupChatService';
 import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
-import { ElMessage } from 'element-plus';
+import { MESSAGES } from '@/utils/message';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -52,7 +52,7 @@ const handleScroll = async () => {
     }
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }
@@ -72,7 +72,7 @@ const handleSendMessage = async (val: string) => {
     return;
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   }
 };
 
@@ -103,7 +103,7 @@ const fetchInitialMessages = async () => {
     );
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }

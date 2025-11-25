@@ -14,7 +14,7 @@ import { sendMessage } from '@/services/chatService';
 import { handleUploadImageToCloudinary } from '@/services/uploadService';
 import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
-import { ElMessage } from 'element-plus';
+import { MESSAGES } from '@/utils/message';
 import { nextTick, onMounted, ref } from 'vue';
 
 const msgs = ref<Message[]>([]);
@@ -23,6 +23,7 @@ const isSendingMsg = ref(false);
 const chatStore = useChatStore();
 const messageListRef = ref<HTMLDivElement | null>(null);
 const firstVisibleDoc = ref<unknown>(null);
+const previewImageUrl = ref<string>('');
 const loading = ref(false);
 const user = getDataUser();
 
@@ -49,7 +50,7 @@ const handleScroll = async () => {
     }
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to load older messages';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }
@@ -66,31 +67,38 @@ const onSendMessage = async (value: string, typeMessage: 'text' | 'image') => {
   });
 };
 
+const onSendMessageWithText = async (text: string) => {
+  if (!text.trim()) return;
+  await sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, text, 'text').then(
+    () => {
+      chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
+    },
+  );
+};
+
+const onSendMessageWithImage = async (file: File) => {
+  isSendingMsg.value = true;
+  previewImageUrl.value = URL.createObjectURL(file);
+  scrollToBottom(messageListRef);
+  await handleUploadImageToCloudinary(file).then(async (url) => {
+    if (!url) return;
+    onSendMessage(url, 'image');
+  });
+};
+
 const handleSendMessage = async (value: string | File, type: { type: string }) => {
   try {
-    if (type.type === 'image' && typeof value !== 'string') {
-      isSendingMsg.value = true;
-      scrollToBottom(messageListRef);
-      await handleUploadImageToCloudinary(value as File).then(async (url) => {
-        if (!url) return;
-        onSendMessage(url, 'image');
-      });
-    } else {
-      if (typeof value === 'string' && !value.trim()) return;
-      await sendMessage(
-        chatStore.roomChatId as string,
-        user?.user?.uid as string,
-        value as string,
-        'text',
-      ).then(() => {
-        chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
-      });
+    if (type.type === 'text') {
+      await onSendMessageWithText(value as string);
+    } else if (type.type === 'image') {
+      await onSendMessageWithImage(value as File);
     }
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to send message';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     isSendingMsg.value = false;
+    previewImageUrl.value = '';
   }
 };
 
@@ -120,7 +128,7 @@ const fetchInitialMessages = async () => {
     );
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to fetch messages';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }
@@ -144,11 +152,11 @@ const handleTypingUpdate = (isTyping: boolean) => {
     >
       <template v-if="msgs.length > 0">
         <MessageItem v-for="message in msgs" :key="message.id" :message="message" />
-        <div class="chat-message chat-message--own" v-if="isSendingMsg">
-          <ImageSending :imageUrl="''" :isSending="isSendingMsg" />
-        </div>
       </template>
       <p v-else class="no-message">No messages yet. Start the conversation!</p>
+      <div v-if="isSendingMsg && previewImageUrl" class="chat-message chat-message--own">
+        <ImageSending :image-url="previewImageUrl" :is-sending="isSendingMsg" />
+      </div>
       <p v-if="isOtherTyping" class="typing">
         {{ chatStore.targetUser?.displayName }} is typing...
       </p>

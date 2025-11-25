@@ -3,8 +3,8 @@ import { auth } from '@/firebase/config';
 import router from '@/router';
 import { saveUserIfNotExists } from '@/services/userService';
 import type { LoginForm } from '@/types/login.type';
+import { MESSAGES } from '@/utils/message';
 import type { FormInstance, FormRules } from 'element-plus';
-import { ElMessage } from 'element-plus';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { reactive, ref } from 'vue';
 
@@ -42,11 +42,7 @@ const handleRegister = async () => {
       await createUserWithEmailAndPassword(auth, registerForm.email, registerForm.password)
         .then(async (res) => {
           if (!res) return;
-          ElMessage({
-            message: 'Registration successful!',
-            type: 'success',
-            plain: true,
-          });
+          MESSAGES.success('Registration successful!', 3);
           router.authUser = res.user;
           await saveUserIfNotExists().then(() => {
             router.push({ name: 'Login' });
@@ -57,7 +53,8 @@ const handleRegister = async () => {
         });
     } catch (err: unknown) {
       const msg = (err as { message?: string })?.message ?? 'An error occurred';
-      ElMessage({ message: msg, type: 'error', plain: true });
+      MESSAGES.error(msg, 3);
+    } finally {
       loading.value = false;
     }
   }

@@ -53,16 +53,17 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import '@/assets/styles/components/conversation-message.scss';
+import ImageSending from '@/components/ui/ImageSending.vue';
 import { emojis } from '@/constants/emoji';
 import { getDataUser } from '@/helper/storage';
 import { toggleReaction } from '@/services/reactionService';
 import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { formatFirestoreDate } from '@/utils/date';
-import { ElMessage, ElPopover } from 'element-plus';
+import { MESSAGES } from '@/utils/message';
+import { ElPopover } from 'element-plus';
 import { computed, ref, watch } from 'vue';
 import CAvatar from '../../ui/Avatar.vue';
-import ImageSending from '@/components/ui/ImageSending.vue';
 
 const chatStore = useChatStore();
 const user = getDataUser();
@@ -110,8 +111,8 @@ const handleReact = async (emoji: string) => {
       emojisPopoverRef.value?.hide();
     });
   } catch (error) {
-    const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    const msg = (error as { message?: string })?.message ?? 'Failed to add reaction';
+    MESSAGES.error(msg, 3);
   }
 };
 

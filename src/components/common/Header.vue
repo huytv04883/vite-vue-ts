@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import logoUrl from '@/assets/imgs/ss.png';
+import { useAuth } from '@/composables/useAuth';
 import { auth } from '@/firebase/config';
 import { clearDataUser } from '@/helper/storage';
-import { useAuth } from '@/composables/useAuth';
 import router from '@/router';
 import { useAppStore } from '@/store/appStore';
+import { MESSAGES } from '@/utils/message';
 import { Edit } from '@element-plus/icons-vue';
 import { onClickOutside } from '@vueuse/core';
-import { ElMessage } from 'element-plus';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { onMounted, ref, useTemplateRef } from 'vue';
 
@@ -41,8 +41,8 @@ const handleLogout = async () => {
       router.push({ name: 'Login' });
     });
   } catch (error) {
-    const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    const msg = (error as { message?: string })?.message ?? 'Failed to logout';
+    MESSAGES.error(msg, 3);
   }
 };
 

@@ -16,6 +16,7 @@
           ref="fileInputRef"
           type="file"
           accept="image/*"
+          style="display: none;"
           @change="handleFileSelect"
         />
         <el-button :icon="Burger" circle plain title="Attach file" @click="triggerFileInput" />
@@ -47,8 +48,8 @@ import ImageSending from '@/components/ui/ImageSending.vue';
 import { getDataUser } from '@/helper/storage';
 import { listenTypingStatus, setTypingStatus } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
+import { MESSAGES } from '@/utils/message';
 import { Burger, Close, Right as Send } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
 const chatStore = useChatStore();
 const user = getDataUser();
@@ -127,8 +128,8 @@ const handleSend = async (): Promise<void> => {
     }
     message.value = '';
   } catch (error) {
-    const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    const msg = (error as { message?: string })?.message ?? 'Failed to send message';
+    MESSAGES.error(msg, 3);
   }
 };
 </script>

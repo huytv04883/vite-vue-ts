@@ -7,7 +7,7 @@ import { getRandomUsers } from '@/services/userService';
 import { CHAT_TYPE, useChatStore } from '@/store/useChatStore';
 import { Group } from '@/types/group.type';
 import { User } from '@/types/user.type';
-import { ElMessage } from 'element-plus';
+import { MESSAGES } from '@/utils/message';
 import { onMounted, ref } from 'vue';
 defineOptions({
   name: 'Dashboard-page',
@@ -29,7 +29,7 @@ const handleCreateChat = async (targetUser: User) => {
     });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   }
 };
 
@@ -46,7 +46,7 @@ const initData = async () => {
     groupChats.value = await getGroupsChatByUserId(auth.currentUser?.uid as string);
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }

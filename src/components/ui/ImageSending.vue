@@ -10,14 +10,22 @@
         class="image-sending__image"
       />
       <div v-if="isSending" class="image-sending__overlay">
-        <div class="image-sending__progress" v-loading="true" />
+        <div class="image-sending__progress">
+          <img
+            :src="imageUrl"
+            :width="width"
+            :height="height"
+            alt="Sending image"
+            class="image-sending__image"
+          />
+          <span>Sending...</span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
 defineOptions({
   name: 'ImageSending',
 });

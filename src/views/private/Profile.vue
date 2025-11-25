@@ -2,8 +2,8 @@
 import ProfileAvatar from '@/components/modules/profile/ProfileAvatar.vue';
 import { getDataUserById, updateUserProfile } from '@/services/userService';
 import { User } from '@/types/user.type';
+import { MESSAGES } from '@/utils/message';
 import { Edit, Message as MessageIcon } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
 import { getAuth } from 'firebase/auth';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -39,7 +39,7 @@ const loadUserData = async () => {
     }
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to fetch user data';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     isPreparing.value = false;
   }
@@ -62,13 +62,12 @@ const handleSaveProfile = async () => {
 
     // Update Firestore user document
     await updateUserProfile(user.value.uid, profileForm.value.displayName);
-
-    ElMessage({ message: 'Profile updated successfully!', type: 'success', plain: true });
+    MESSAGES.success('Profile updated successfully!', 3);
     isEditing.value = false;
     loadUserData();
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to update profile';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     loading.value = false;
   }

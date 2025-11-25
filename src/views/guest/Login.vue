@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { useAuth } from '@/composables/useAuth';
 import { auth } from '@/firebase/config';
 import { setDataUser } from '@/helper/storage';
-import { useAuth } from '@/composables/useAuth';
 import router from '@/router';
 import { saveUserIfNotExists } from '@/services/userService';
 import { LoginForm } from '@/types/login.type';
+import { MESSAGES } from '@/utils/message';
 import type { FormInstance, FormRules } from 'element-plus';
-import { ElMessage } from 'element-plus';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { reactive, ref } from 'vue';
 
@@ -44,11 +44,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
       await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password)
         .then(async (res) => {
           if (!res) return;
-          ElMessage({
-            message: 'Login successful!',
-            type: 'success',
-            plain: true,
-          });
+          MESSAGES.success('Login successful!', 3);
           router.authUser = res.user;
           setDataUser(res);
           await saveUserIfNotExists();
@@ -59,7 +55,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
         });
     } catch (error) {
       const msg = (error as { message?: string })?.message ?? 'An error occurred';
-      ElMessage({ message: msg, type: 'error', plain: true });
+      MESSAGES.error(msg, 3);
       loading.value = false;
     }
   }
@@ -71,18 +67,15 @@ const handleGoogleLogin = async () => {
     await signInWithGoogle().then(async (res) => {
       if (!res) return;
       await saveUserIfNotExists();
-      ElMessage({
-        message: 'Login with Google successful!',
-        type: 'success',
-        plain: true,
-      });
+      MESSAGES.success('Login with Google successful!', 3);
       router.authUser = res.user;
       setDataUser(res);
       router.push({ name: 'Dashboard' });
     });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'An error occurred';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
+  } finally {
     loading.value = false;
   }
 };

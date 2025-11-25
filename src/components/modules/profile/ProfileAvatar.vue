@@ -24,7 +24,7 @@ import CloudinaryUpload from '@/components/ui/CloudinaryUpload.vue';
 import { handleUploadImageToCloudinary } from '@/services/uploadService';
 import { updateUserProfile } from '@/services/userService';
 import { User } from '@/types/user.type';
-import { ElMessage } from 'element-plus';
+import { MESSAGES } from '@/utils/message';
 import { ref } from 'vue';
 
 defineOptions({
@@ -54,12 +54,12 @@ const handleUploadImage = async (selectedFile: File) => {
     await handleUploadImageToCloudinary(selectedFile).then(async (url) => {
       if (!url) return;
       await updateUserProfile(props.user!.uid, props.user?.displayName ?? '', url).then(() => {
-        ElMessage({ message: 'Avatar updated successfully', type: 'success', plain: true });
+        MESSAGES.success('Avatar updated successfully', 3);
       });
     });
   } catch (error) {
     const msg = (error as { message?: string })?.message ?? 'Failed to upload image';
-    ElMessage({ message: msg, type: 'error', plain: true });
+    MESSAGES.error(msg, 3);
   } finally {
     isUploading.value = false;
   }
