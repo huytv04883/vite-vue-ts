@@ -7,7 +7,7 @@ import { clearDataUser } from '@/helper/storage';
 import router from '@/router';
 import { useAppStore } from '@/store/appStore';
 import { MESSAGES } from '@/utils/message';
-import { Edit } from '@element-plus/icons-vue';
+import { Bell, Edit } from '@element-plus/icons-vue';
 import { onClickOutside } from '@vueuse/core';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { onMounted, ref, useTemplateRef } from 'vue';
@@ -63,6 +63,9 @@ const OPTIONS = [
       <img :src="logoUrl" alt="Logo" width="35" height="35" fit="contain" />
     </h1>
     <div class="header__right" ref="dropdownRef">
+      <button class="header__edit" @click="appStore.setOpenNotificationPopover(true)">
+        <el-icon><Bell /></el-icon>
+      </button>
       <button class="header__edit" @click="appStore.setOpenCreateGroupPopover(true)">
         <el-icon><Edit /></el-icon>
       </button>
