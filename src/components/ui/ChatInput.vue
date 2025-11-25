@@ -16,7 +16,6 @@
           ref="fileInputRef"
           type="file"
           accept="image/*"
-          style="display: none"
           @change="handleFileSelect"
         />
         <el-button :icon="Burger" circle plain title="Attach file" @click="triggerFileInput" />
