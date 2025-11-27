@@ -7,8 +7,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import './assets/styles/main.scss';
 import router from './router';
+import { initNoti } from './services/cloudflareWorkerService';
 import { waitForAuthReady } from './utils/firebaseAuthReady';
-import { LOGs } from './utils/common';
 
 const cloudinary = new Cloudinary({
   cloud: {
@@ -16,18 +16,7 @@ const cloudinary = new Cloudinary({
   },
 });
 
-/** Register Service Worker */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/sw.js')
-    .then(async (registration) => {
-      const subscription = await registration.pushManager.getSubscription();
-      LOGs.success(subscription);
-    })
-    .catch((error) => {
-      LOGs.error((error as Error).message);
-    });
-}
+initNoti();
 
 waitForAuthReady().then((res) => {
   router.authUser = res;

@@ -1,7 +1,5 @@
 /** SW - Shasimi - huytv04883 */
 
-const CACHE_NAME = 'shasimi-cache-v1';
-
 /** Init sw */
 self.addEventListener('install', () => {
   // Skip waiting to activate immediately
@@ -22,7 +20,14 @@ self.addEventListener('fetch', () => {
 
 /** Push event sw */
 self.addEventListener('push', (event) => {
-  console.log('Push event received:', event);
+  const data = event.data ? event.data.text() : 'New message!';
+  event.waitUntil(
+    self.registration.showNotification('New message', {
+      body: data,
+      icon: '/icons/icons/ss.png',
+      badge: '/icons/icons/ss.png',
+    }),
+  );
 });
 
 /** Notification click event sw */
