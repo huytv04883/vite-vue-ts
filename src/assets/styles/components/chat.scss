@@ -1,0 +1,182 @@
+@use '../_variables' as *;
+@use '../_mixins' as *;
+
+.dashboard {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: $spacing-3 $spacing-4;
+  border-bottom: 1px solid $gray-200;
+  background: $white;
+  gap: $spacing-3;
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+
+    .back {
+      border: none;
+    }
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__name {
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
+    color: $gray-900;
+    @include text-truncate-multiline(1);
+  }
+
+  &__status {
+    font-size: $font-size-xs;
+    color: $gray-600;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0;
+  }
+}
+
+.users,
+.groups {
+  margin-top: $spacing-4;
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    list-style: none;
+    gap: $spacing-2;
+    cursor: pointer;
+    padding: $spacing-2 $spacing-4;
+    border-radius: $border-radius-md;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $gray-100;
+    }
+  }
+}
+
+.conversation-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  min-height: -webkit-fill-available;
+}
+
+.message-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+
+  &.empty {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.no-message {
+  font-size: $font-size-xs;
+  color: $gray-500;
+  font-style: italic;
+}
+
+.typing {
+  font-size: $font-size-sm;
+  color: $gray-700;
+  font-style: italic;
+  margin-top: $spacing-2;
+}
+
+.send-box {
+  flex-shrink: 0;
+  padding: $spacing-4;
+  border-top: 1px solid $gray-200;
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  position: relative;
+  /* Ensure it stays visible on iOS */
+  z-index: 10;
+
+  &--sending {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__preview {
+    position: relative;
+    display: inline-block;
+    max-width: fit-content;
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    &-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6) !important;
+      border: none !important;
+      color: $white !important;
+      z-index: 2;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.8) !important;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__left {
+    flex-shrink: 0;
+  }
+
+  &__right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    input {
+      flex: 1;
+      padding: $spacing-2 $spacing-3;
+      border: 1px solid $gray-300;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      outline: none;
+      transition: border-color $transition-fast;
+      /* iOS fixes */
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 40px;
+      line-height: normal;
+
+      &:focus {
+        border-color: $primary-color;
+      }
+
+      &::placeholder {
+        color: $gray-400;
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+@use '../_variables' as *;
+@use '../_mixins' as *;
+
+.login {
+  &-page {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-form {
+    @include flex-column;
+    gap: $spacing-4;
+    max-width: 400px;
+    margin: auto;
+    width: 100%;
+    padding: $spacing-6;
+  }
+
+  &__title {
+    @include heading-2;
+    margin: 0 0 $spacing-6 0;
+    text-align: center;
+  }
+
+  &__form {
+    @include flex-column;
+    gap: $spacing-4;
+  }
+
+  &__form-group {
+    @include form-group;
+  }
+
+  &__input {
+    @include input-base;
+  }
+
+  &__button {
+    &--loading {
+      @include button-loading;
+    }
+  }
+
+  &__google-btn {
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-2;
+    }
+  }
+
+  &__error {
+    @include error-state;
+    @include small-text;
+    margin-top: $spacing-3;
+    text-align: center;
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: $spacing-4;
+    @include small-text;
+
+    a {
+      @include link-primary;
+      margin-left: $spacing-1;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@use '../_variables' as *;
+
+.image-sending {
+  &__progress {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: $spacing-3;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.3;
+    }
+
+    span {
+      position: relative;
+      color: $white;
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-xs;
+    }
+  }
+}
