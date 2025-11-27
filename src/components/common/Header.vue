@@ -54,6 +54,16 @@ const OPTIONS = [
       isShowDropdown.value = false;
     },
   },
+<<<<<<< HEAD
+=======
+  {
+    label: 'Settings',
+    handler: () => {
+      router.push({ name: 'Settings' });
+      isShowDropdown.value = false;
+    },
+  },
+>>>>>>> feature/noti
   { label: 'Logout', handler: handleLogout },
 ];
 </script>

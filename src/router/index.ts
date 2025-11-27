@@ -11,6 +11,10 @@ import Dashboard from '@/views/private/Dashboard.vue';
 import Profile from '@/views/private/Profile.vue';
 
 const routes = [
+<<<<<<< HEAD
+=======
+  /** Guest (public) pages */
+>>>>>>> feature/noti
   {
     path: ROUTES.BASE,
     name: 'Home',
@@ -29,6 +33,11 @@ const routes = [
     component: Register,
     meta: { requiresAuth: false, layout: PATH.PUBLIC },
   },
+<<<<<<< HEAD
+=======
+
+  /** Private (authenticated) pages */
+>>>>>>> feature/noti
   {
     path: ROUTES.DASHBOARD,
     name: 'Dashboard',
@@ -53,6 +62,15 @@ const routes = [
     component: Profile,
     meta: { requiresAuth: true, layout: PATH.PRIVATE },
   },
+<<<<<<< HEAD
+=======
+  {
+    path: ROUTES.SETTINGS,
+    name: 'Settings',
+    component: () => import('@/views/private/Settings.vue'),
+    meta: { requiresAuth: true, layout: PATH.PRIVATE },
+  },
+>>>>>>> feature/noti
 ];
 
 const router = createRouter({

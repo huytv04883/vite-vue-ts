@@ -9,6 +9,10 @@ import { Group } from '@/types/group.type';
 import { User } from '@/types/user.type';
 import { MESSAGES } from '@/utils/message';
 import { onMounted, ref } from 'vue';
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/noti
 defineOptions({
   name: 'Dashboard-page',
 });
@@ -58,7 +62,11 @@ onMounted(async () => {
 </script>
 <template>
   <div class="dashboard" v-loading="loading">
+<<<<<<< HEAD
     <template v-if="users?.length > 0 && groupChats.length > 0">
+=======
+    <template v-if="users?.length > 0 || groupChats.length > 0">
+>>>>>>> feature/noti
       <el-divider class="chat-heading" content-position="left">Friends</el-divider>
       <div class="users">
         <ul>

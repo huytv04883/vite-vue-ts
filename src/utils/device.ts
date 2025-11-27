@@ -127,6 +127,7 @@ const getRecommendedAction = (device: DeviceInfo): string => {
 
   return 'not_supported';
 };
+<<<<<<< HEAD
 
 export const logDeviceInfo = (device: DeviceInfo) => {
   console.group('🔍 Device Information');
@@ -142,3 +143,5 @@ export const logDeviceInfo = (device: DeviceInfo) => {
 
   return capabilities;
 };
+=======
+>>>>>>> feature/noti
