@@ -2,11 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
-<<<<<<< HEAD
-// https://vite.dev/config/
-=======
 /** https://vite.dev/config */
->>>>>>> feature/noti
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -25,10 +21,6 @@ export default defineConfig({
     },
   },
   server: {
-<<<<<<< HEAD
-    allowedHosts: ['fd80822cbfab.ngrok-free.app', 'shasimi.vercel.app/'],
-=======
     allowedHosts: ['shasimi.vercel.app/'],
->>>>>>> feature/noti
   },
 });

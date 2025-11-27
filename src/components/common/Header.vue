@@ -54,8 +54,6 @@ const OPTIONS = [
       isShowDropdown.value = false;
     },
   },
-<<<<<<< HEAD
-=======
   {
     label: 'Settings',
     handler: () => {
@@ -63,7 +61,6 @@ const OPTIONS = [
       isShowDropdown.value = false;
     },
   },
->>>>>>> feature/noti
   { label: 'Logout', handler: handleLogout },
 ];
 </script>

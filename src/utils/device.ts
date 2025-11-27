@@ -127,21 +127,3 @@ const getRecommendedAction = (device: DeviceInfo): string => {
 
   return 'not_supported';
 };
-<<<<<<< HEAD
-
-export const logDeviceInfo = (device: DeviceInfo) => {
-  console.group('🔍 Device Information');
-  console.log('Platform:', device.isIOS ? 'iOS' : device.isAndroid ? 'Android' : 'Desktop');
-  console.log('Browser:', device.browserName);
-  console.log('OS Version:', device.osVersion || 'N/A');
-  console.log('Running as PWA:', device.isPWA ? '✅' : '❌');
-  console.log('Web Push Support:', device.canUseWebPush ? '✅' : '❌');
-
-  const capabilities = getDeviceCapabilities(device);
-  console.log('Recommended Action:', capabilities.recommendedAction);
-  console.groupEnd();
-
-  return capabilities;
-};
-=======
->>>>>>> feature/noti

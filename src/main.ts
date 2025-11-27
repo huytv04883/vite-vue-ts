@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { createApp } from 'vue';
-import './assets/styles/main.scss';
-import { createPinia } from 'pinia';
-import App from './App.vue';
-import router from './router';
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
-import { waitForAuthReady } from './utils/firebaseAuthReady';
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-import { Cloudinary } from '@cloudinary/url-gen';
-=======
 import { Cloudinary } from '@cloudinary/url-gen';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -21,7 +9,6 @@ import './assets/styles/main.scss';
 import router from './router';
 import { waitForAuthReady } from './utils/firebaseAuthReady';
 import { LOGs } from './utils/common';
->>>>>>> feature/noti
 
 const cloudinary = new Cloudinary({
   cloud: {
@@ -29,8 +16,6 @@ const cloudinary = new Cloudinary({
   },
 });
 
-<<<<<<< HEAD
-=======
 /** Register Service Worker */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
@@ -44,7 +29,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
->>>>>>> feature/noti
 waitForAuthReady().then((res) => {
   router.authUser = res;
   const pinia = createPinia();

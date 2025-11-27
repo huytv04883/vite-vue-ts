@@ -185,14 +185,9 @@ const handleToggleSubscription = async () => {
         MESSAGES.error('Failed to subscribe', 1);
       }
     }
-<<<<<<< HEAD
-  } catch {
-    MESSAGES.error('Subscription error', 1);
-=======
   } catch (error) {
     MESSAGES.error('Subscription error', 1);
     console.error(error);
->>>>>>> ab702f6082acd85d96f26821f0c4b20b3f5d2d9c
   } finally {
     loading.value = false;
   }
