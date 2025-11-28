@@ -7,6 +7,7 @@ import PrivateLayout from '@/layouts/PrivateLayout.vue';
 import { onAuthStateChanged } from 'firebase/auth';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import router from './router';
+import { initNoti } from './services/cloudflareWorkerService';
 
 const currentUser = ref<boolean>(false);
 const routerChat = ['ChatUser', 'ChatGroup'];
@@ -14,8 +15,9 @@ const currentPage = computed(() => (currentUser.value ? PATH.PRIVATE : PATH.PUBL
 const layout = ref(GuestLayout);
 
 onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     currentUser.value = !!user?.email;
+    await initNoti();
   });
 });
 

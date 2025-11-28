@@ -56,7 +56,7 @@ import '@/assets/styles/components/conversation-message.scss';
 import ImageSending from '@/components/ui/ImageSending.vue';
 import { emojis } from '@/constants/emoji';
 import { getDataUser } from '@/helper/storage';
-import { toggleReaction } from '@/services/reactionService';
+import { toggleReaction } from '@/services/firebase/reactionService';
 import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { formatFirestoreDate } from '@/utils/date';

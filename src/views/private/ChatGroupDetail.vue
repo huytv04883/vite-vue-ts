@@ -8,8 +8,8 @@ import {
   getOlderMessages,
   getRecentMessages,
   listenMessages,
-} from '@/services/baseService';
-import { sendMessage } from '@/services/groupChatService';
+} from '@/services/firebase/baseService';
+import { sendMessage } from '@/services/firebase/groupChatService';
 import { useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { MESSAGES } from '@/utils/message';

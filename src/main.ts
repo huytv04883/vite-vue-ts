@@ -7,7 +7,6 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import './assets/styles/main.scss';
 import router from './router';
-import { initNoti } from './services/cloudflareWorkerService';
 import { waitForAuthReady } from './utils/firebaseAuthReady';
 
 const cloudinary = new Cloudinary({
@@ -15,8 +14,6 @@ const cloudinary = new Cloudinary({
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
   },
 });
-
-initNoti();
 
 waitForAuthReady().then((res) => {
   router.authUser = res;

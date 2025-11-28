@@ -5,6 +5,7 @@ import { useAuth } from '@/composables/useAuth';
 import { auth } from '@/firebase/config';
 import { clearDataUser } from '@/helper/storage';
 import router from '@/router';
+import { unsubscribeFromPush } from '@/services/pushService';
 import { useAppStore } from '@/store/appStore';
 import { MESSAGES } from '@/utils/message';
 import { Bell, Edit } from '@element-plus/icons-vue';
@@ -32,9 +33,21 @@ onMounted(() => {
   });
 });
 
+const handleUnsubscribeSubscription = async () => {
+  try {
+    await unsubscribeFromPush();
+    return true;
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? 'Failed to unsubscribe';
+    MESSAGES.error(msg, 3);
+    return false;
+  }
+};
+
 const handleLogout = async () => {
   try {
-    await logout().then(() => {
+    await handleUnsubscribeSubscription();
+    await logout().then(async () => {
       router.authUser = null;
       clearDataUser();
       isShowDropdown.value = false;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ProfileAvatar from '@/components/modules/profile/ProfileAvatar.vue';
-import { getDataUserById, updateUserProfile } from '@/services/userService';
+import { getDataUserById, updateUserProfile } from '@/services/firebase/userService';
 import { User } from '@/types/user.type';
 import { MESSAGES } from '@/utils/message';
 import { Edit, Message as MessageIcon } from '@element-plus/icons-vue';

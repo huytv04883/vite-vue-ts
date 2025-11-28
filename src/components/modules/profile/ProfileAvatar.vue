@@ -21,8 +21,8 @@
 <script setup lang="ts">
 import fallbackAavatar from '@/assets/imgs/avatar-fallback.png';
 import CloudinaryUpload from '@/components/ui/CloudinaryUpload.vue';
-import { handleUploadImageToCloudinary } from '@/services/uploadService';
-import { updateUserProfile } from '@/services/userService';
+import { handleUploadImageToCloudinary } from '@/services/cloudinary/uploadService';
+import { updateUserProfile } from '@/services/firebase/userService';
 import { User } from '@/types/user.type';
 import { MESSAGES } from '@/utils/message';
 import { ref } from 'vue';

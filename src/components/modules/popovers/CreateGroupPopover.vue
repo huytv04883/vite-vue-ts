@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { createGroupChat } from '@/services/groupChatService';
-import { getRandomUsers } from '@/services/userService';
+import { createGroupChat } from '@/services/firebase/groupChatService';
+import { getRandomUsers } from '@/services/firebase/userService';
 import { useAppStore } from '@/store/appStore';
 import { User } from '@/types/user.type';
 import { MESSAGES } from '@/utils/message';

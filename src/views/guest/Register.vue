@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { auth } from '@/firebase/config';
 import router from '@/router';
-import { saveUserIfNotExists } from '@/services/userService';
+import { saveUserIfNotExists } from '@/services/firebase/userService';
 import type { LoginForm } from '@/types/login.type';
 import { MESSAGES } from '@/utils/message';
 import type { FormInstance, FormRules } from 'element-plus';

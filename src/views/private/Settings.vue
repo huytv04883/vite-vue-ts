@@ -1,8 +1,9 @@
 <template>
-    <NotificationSettings />
+  <div class="settings-page">
+    <h1>Settings Page</h1>
+  </div>
 </template>
 <script setup lang="ts">
-import NotificationSettings from '@/components/modules/NotificationSettings.vue';
 
 defineOptions({
   name: 'SettingsPage',

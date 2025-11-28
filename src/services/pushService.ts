@@ -1,13 +1,16 @@
 import { db } from '@/firebase/config';
 import { PushSubscription } from '@/types/subcription.type';
 import { urlBase64ToUint8Array } from '@/utils/common';
-import { collection, deleteDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 
 /**
- * Save push subscription to Firestore
+ * Save user subscription to Firestore
  */
-const saveSubscriptionToFirestore = async (userId: string, subscription: PushSubscription) => {
-  const subscriptionRef = doc(collection(db, 'pushSubscriptions'), userId);
+export const saveSubscriptionToFirestore = async (
+  userId: string,
+  subscription: PushSubscription,
+) => {
+  const subscriptionRef = doc(collection(db, 'users_subscriptions'), userId);
   await setDoc(subscriptionRef, {
     userId,
     subscription,
@@ -17,34 +20,31 @@ const saveSubscriptionToFirestore = async (userId: string, subscription: PushSub
 };
 
 /**
- * Delete push subscription from Firestore
+ * Delete user subscription from Firestore
  */
-const deleteSubscriptionFromFirestore = async (userId: string) => {
-  const subscriptionRef = doc(collection(db, 'pushSubscriptions'), userId);
+export const deleteSubscriptionFromFirestore = async (userId: string) => {
+  const subscriptionRef = doc(collection(db, 'users_subscriptions'), userId);
   await deleteDoc(subscriptionRef);
+};
+
+export const isUserSubscriptionExists = async (userId: string) => {
+  const subscriptionRef = doc(collection(db, 'users_subscriptions'), userId);
+  const docSnap = await getDoc(subscriptionRef);
+  return docSnap.exists();
 };
 
 /**
  * Subscribe to push notifications
  */
-export const subscribeToPush = async (userId: string): Promise<PushSubscription | null> => {
+export const subscribeToPush = async (userId: string) => {
   try {
-    // Check if Service Worker is ready
     const registration = await navigator.serviceWorker.ready;
-
-    // Get VAPID public key from env
     const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-    if (!vapidPublicKey) {
-      throw new Error('VAPID public key not found in environment variables');
-    }
-
-    // Subscribe to push notifications
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true, // Must be true for web push
       applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
     });
 
-    // Convert subscription to plain object
     const subscriptionObject = subscription.toJSON();
     const pushSubscription: PushSubscription = {
       endpoint: subscriptionObject.endpoint!,
@@ -54,9 +54,12 @@ export const subscribeToPush = async (userId: string): Promise<PushSubscription 
       },
     };
 
-    // Save subscription to Firestore
-    await saveSubscriptionToFirestore(userId, pushSubscription);
-    return pushSubscription;
+    if (userId || subscription) {
+      const isExistUserSub = await isUserSubscriptionExists(userId);
+      if (!isExistUserSub) {
+        await saveSubscriptionToFirestore(userId, pushSubscription);
+      }
+    }
   } catch (error) {
     throw new Error('Error subscribing to push: ' + (error as Error).message);
   }
@@ -65,7 +68,7 @@ export const subscribeToPush = async (userId: string): Promise<PushSubscription 
 /**
  * Unsubscribe from push notifications
  */
-export const unsubscribeFromPush = async (userId: string): Promise<boolean> => {
+export const unsubscribeFromPush = async () => {
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
@@ -73,11 +76,8 @@ export const unsubscribeFromPush = async (userId: string): Promise<boolean> => {
     if (subscription) {
       await subscription.unsubscribe();
     }
-    await deleteSubscriptionFromFirestore(userId);
-
     return true;
-  } catch (error) {
-    console.error('Error unsubscribing from push:', error);
+  } catch {
     return false;
   }
 };
@@ -102,8 +102,7 @@ export const getCurrentSubscription = async (): Promise<PushSubscription | null>
         auth: subscriptionObject.keys!.auth!,
       },
     };
-  } catch (error) {
-    console.error('Error getting subscription:', error);
+  } catch {
     return null;
   }
 };

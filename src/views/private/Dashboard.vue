@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { auth } from '@/firebase/config';
 import router from '@/router';
-import { getOrCreateChat } from '@/services/chatService';
-import { getGroupsChatByUserId } from '@/services/groupChatService';
-import { getRandomUsers } from '@/services/userService';
+import { getOrCreateChat } from '@/services/firebase/chatService';
+import { getGroupsChatByUserId } from '@/services/firebase/groupChatService';
+import { getRandomUsers } from '@/services/firebase/userService';
 import { CHAT_TYPE, useChatStore } from '@/store/useChatStore';
 import { Group } from '@/types/group.type';
 import { User } from '@/types/user.type';

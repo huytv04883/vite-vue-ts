@@ -9,13 +9,14 @@ import {
   getOlderMessages,
   getRecentMessages,
   listenMessages,
-} from '@/services/baseService';
-import { sendMessage } from '@/services/chatService';
-import { handleUploadImageToCloudinary } from '@/services/uploadService';
+} from '@/services/firebase/baseService';
+import { sendMessage } from '@/services/firebase/chatService';
+import { handleUploadImageToCloudinary } from '@/services/cloudinary/uploadService';
 import { CHAT_ACTION, useChatStore } from '@/store/useChatStore';
 import { Message } from '@/types/message.type';
 import { MESSAGES } from '@/utils/message';
 import { nextTick, onMounted, ref } from 'vue';
+import { pushNotifyUser } from '@/services/firebase/subscriptionService';
 
 const msgs = ref<Message[]>([]);
 const isOtherTyping = ref(false);
@@ -70,7 +71,8 @@ const onSendMessage = async (value: string, typeMessage: 'text' | 'image') => {
 const onSendMessageWithText = async (text: string) => {
   if (!text.trim()) return;
   await sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, text, 'text').then(
-    () => {
+    async () => {
+      await pushNotifyUser(user?.user?.uid as string, text);
       chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
     },
   );

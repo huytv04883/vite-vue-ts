@@ -1,16 +1,19 @@
-import { LOGs, urlBase64ToUint8Array } from '@/utils/common';
 import { getAuth } from 'firebase/auth';
+import { subscribeToPush } from './pushService';
+
+const auth = getAuth();
 
 export const initNoti = async () => {
   const registration = await registerServiceWorker();
-  if (!registration) return;
+  if (!registration || !auth.currentUser) return;
 
   const permission = await Notification.requestPermission();
+
   if (permission !== 'granted') {
     console.warn('Notification permission not granted.');
   }
 
-  await subscribePush();
+  await subscribeToPush(auth.currentUser?.uid as string);
 };
 
 export const registerServiceWorker = async () => {
@@ -21,50 +24,22 @@ export const registerServiceWorker = async () => {
   }
 };
 
-export const subscribeUser = async (subscription: PushSubscription) => {
+export const pushMessageToCloudflareWorker = async (
+  subscription: PushSubscription,
+  message: string,
+) => {
   try {
     const auth = getAuth();
     await fetch(import.meta.env.VITE_PUSH_WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userId: auth.currentUser?.uid,
         subscription,
+        title: `New message from ${auth.currentUser?.displayName || 'Someone'}`,
+        body: message,
       }),
     });
   } catch (error) {
-    throw new Error('Error subscribing to push in Cloudflare Worker: ' + (error as Error).message);
-  }
-};
-
-export const subscribePush = async () => {
-  const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-  const registration = await navigator.serviceWorker.ready;
-
-  // Subscribe to push notifications
-  const subscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true, // Must be true for web push
-    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-  });
-
-  const existingSubscription = await registration.pushManager.getSubscription();
-  LOGs.info(existingSubscription);
-
-  if (existingSubscription) return;
-  await subscribeUser(subscription);
-};
-
-export const unsubscribeFromPush = async () => {
-  try {
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.getSubscription();
-
-    if (subscription) {
-      await subscription.unsubscribe();
-    }
-    LOGs.success('Unsubscribed from push notifications.');
-    return true;
-  } catch {
-    return false;
+    throw new Error('Error push message to cloudflare worker: ' + (error as Error).message);
   }
 };

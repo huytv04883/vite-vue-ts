@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import ImageSending from '@/components/ui/ImageSending.vue';
 import { getDataUser } from '@/helper/storage';
-import { listenTypingStatus, setTypingStatus } from '@/services/chatService';
+import { listenTypingStatus, setTypingStatus } from '@/services/firebase/chatService';
 import { useChatStore } from '@/store/useChatStore';
 import { MESSAGES } from '@/utils/message';
 import { Burger, Close, Right as Send } from '@element-plus/icons-vue';
