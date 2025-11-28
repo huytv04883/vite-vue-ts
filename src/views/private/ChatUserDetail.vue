@@ -72,7 +72,7 @@ const onSendMessageWithText = async (text: string) => {
   if (!text.trim()) return;
   await sendMessage(chatStore.roomChatId as string, user?.user?.uid as string, text, 'text').then(
     async () => {
-      await pushNotifyUser(user?.user?.uid as string, text);
+      await pushNotifyUser(text);
       chatStore.setChatAction(CHAT_ACTION.SEND_MESSAGE);
     },
   );

@@ -1,5 +1,6 @@
 import { getAuth } from 'firebase/auth';
 import { subscribeToPush } from './pushService';
+import { LOGs } from '@/utils/common';
 
 const auth = getAuth();
 
@@ -19,22 +20,21 @@ export const initNoti = async () => {
 export const registerServiceWorker = async () => {
   /** Register Service Worker */
   if ('serviceWorker' in navigator) {
-    const registration = await navigator.serviceWorker.register('/sw.js');
-    return registration;
+    // const registration = await navigator.serviceWorker.register('/sw.js');
+    const firebaseMsg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    LOGs.success(firebaseMsg);
+    return firebaseMsg;
   }
 };
 
-export const pushMessageToCloudflareWorker = async (
-  subscription: PushSubscription,
-  message: string,
-) => {
+export const pushMessageToCloudflareWorker = async (token: string, message: string) => {
   try {
     const auth = getAuth();
     await fetch(import.meta.env.VITE_PUSH_WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        subscription,
+        token,
         title: `New message from ${auth.currentUser?.displayName || 'Someone'}`,
         body: message,
       }),
