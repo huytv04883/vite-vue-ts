@@ -1,20 +1,16 @@
 import { getAuth } from 'firebase/auth';
-import { subscribeToPush } from './pushService';
-import { LOGs } from '@/utils/common';
 
 const auth = getAuth();
 
 export const initNoti = async () => {
   const registration = await registerServiceWorker();
-  if (!registration || !auth.currentUser) return;
+  if (!registration || !auth?.currentUser) return;
 
   const permission = await Notification.requestPermission();
 
   if (permission !== 'granted') {
     console.warn('Notification permission not granted.');
   }
-
-  await subscribeToPush(auth.currentUser?.uid as string);
 };
 
 export const registerServiceWorker = async () => {
@@ -22,7 +18,6 @@ export const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     // const registration = await navigator.serviceWorker.register('/sw.js');
     const firebaseMsg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    LOGs.success(firebaseMsg);
     return firebaseMsg;
   }
 };
